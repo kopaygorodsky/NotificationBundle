@@ -5,6 +5,9 @@ namespace Kopaygorodsky\NotificationBundle\Console;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Kopaygorodsky\NotificationBundle\Entity\Notification;
+use Kopaygorodsky\NotificationBundle\Event\NotificationEvent;
+use Kopaygorodsky\NotificationBundle\Event\NotificationEventFailed;
+use Kopaygorodsky\NotificationBundle\Event\NotificationEventInterface;
 use Kopaygorodsky\NotificationBundle\Provider\NotificationProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -57,12 +60,23 @@ class SendNotificationCommand extends Command
             throw new EntityNotFoundException(sprintf('Notification with id %s not found', $notificationId));
         }
 
-        foreach ($this->sendingProviders as $provider) {
-            if ($provider->support($notification)) {
-                $provider->send($notification);
-            }
-        }
-        $output->writeln(sprintf('<info>Notification %s has been sent</info>', $notificationId));
-    }
+        $event = new NotificationEvent($notification);
 
+        $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_PRE_SEND, $event);
+
+        try {
+            foreach ($this->sendingProviders as $provider) {
+                if ($provider->support($notification)) {
+                    $provider->send($notification);
+                }
+            }
+
+            $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_POST_SEND, $event);
+
+            $output->writeln(sprintf('<info>Notification %s has been sent</info>', $notificationId));
+        } catch (\Exception $exception) {
+            $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_FAILED, new NotificationEventFailed($notification, $exception));
+            throw $exception;
+        }
+    }
 }

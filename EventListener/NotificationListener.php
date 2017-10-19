@@ -59,5 +59,7 @@ class NotificationListener
 
         // create a job to make notifications async.
         $this->jobProvider->createJob($notification);
+
+        $this->dispatcher->dispatch(NotificationEventInterface::JOB_CREATED, $event);
     }
 }
