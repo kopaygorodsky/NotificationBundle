@@ -1,0 +1,33 @@
+services:
+    kopaygorodsky_notification.listener:
+        class: Kopaygorodsky\NotificationBundle\EventListener\NotificationListener
+        lazy: true
+        arguments:
+             - '@doctrine.orm.entity_manager'
+             - '@event_dispatcher'
+             - '@kopaygorodsky_notification.job_provider'
+             - '@validator'
+        tags:
+            - { name: kernel.event_listener, event: kopaygorodsky.notification.message.created, method: onNotificationCreated }
+
+    kopaygorodsky_notification.sending_provider.email:
+        class: Kopaygorodsky\NotificationBundle\Provider\EmailNotificationProvider
+        arguments: ['@mailer']
+        tags:
+            - {name: kopaygorodsky_notifications.send_provider}
+
+    kopaygorodsky_notification.sending_provider.push:
+        class: Kopaygorodsky\NotificationBundle\Provider\PushNotificationProvider
+        tags:
+            - {name: kopaygorodsky_notifications.send_provider}
+
+    kopaygorodsky_notification.job_provider:
+        class: Kopaygorodsky\NotificationBundle\Job\JmsJobBundleProvider
+        arguments: ['@doctrine.orm.entity_manager']
+
+    kopaygorodsky_notification.console.send_notification:
+        class: Kopaygorodsky\NotificationBundle\Console\SendNotificationCommand
+        arguments: ['@doctrine.orm.entity_manager','@event_dispatcher']
+        ## sending providers added in compiler pass
+        tags:
+            - { name: console.command }

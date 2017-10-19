@@ -1,0 +1,8 @@
+Kopaygorodsky\NotificationBundle\Entity\NotificationEmail:
+    type: entity
+    table: null
+    fields:
+        fromEmail:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }

@@ -1,0 +1,26 @@
+Kopaygorodsky\NotificationBundle\Entity\Notification:
+    type: entity
+    table: null
+    repositoryClass: Kopaygorodsky\NotificationBundle\Repository\NotificationRepository
+    inheritanceType: SINGLE_TABLE
+    discriminatorColumn:
+        name: discr_type
+        type: string
+    discriminatorMap:
+        email: NotificationEmail
+        push: NotificationPush
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        title:
+            type: string
+            length: 255
+            nullable: true
+        message:
+            type: text
+            nullable: true
+    lifecycleCallbacks: {  }
