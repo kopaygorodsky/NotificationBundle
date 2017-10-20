@@ -27,9 +27,6 @@ final class ValidateConsoleCommand implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        if (false === $container->hasDefinition($this->registry)) {
-            return;
-        }
         $registry = $container->findDefinition($this->registry);
 
         if (!array_key_exists(NotificationCommandInterface::class, class_implements($registry->getClass()))) {

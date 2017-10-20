@@ -62,7 +62,7 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
 
         try {
             foreach ($this->sendingProviders as $provider) {
-                if ($provider->support($notification)) {
+                if ($provider->supports($notification)) {
                     $provider->send($notification);
                 }
             }

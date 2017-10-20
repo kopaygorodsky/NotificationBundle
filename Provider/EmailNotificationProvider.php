@@ -21,8 +21,6 @@ class EmailNotificationProvider extends AbstractEmailNotificationProvider
 
     public function send(NotificationMessageInterface $notification): void
     {
-        $recipients = $notification->getRecipients();
-
         $message = (new \Swift_Message($notification->getTitle()))
             ->setFrom($notification->getFromEmail())
             ->setTo($this->getReceiversEmails($notification))
@@ -40,13 +38,8 @@ class EmailNotificationProvider extends AbstractEmailNotificationProvider
      */
     protected function getReceiversEmails(NotificationEmailInterface $notification): array
     {
-        $recipients = $notification->getRecipients();
-        $emails = [];
-
-//        foreach ($recipients as $recipient) {
-//            $emails[] = $recipient->getEmail();
-//        }
-
-        return $emails;
+        return $notification->getRecipients()->map(function ($recipient) {
+            return $recipient->getEmail();
+        })->toArray();
     }
 }

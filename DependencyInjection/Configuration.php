@@ -18,19 +18,31 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('kopaygorodsky_notification');
+        $rootNode = $treeBuilder->root('kopay_notification');
 
         $rootNode
             ->children()
-                ->booleanNode('use_jms_job_bundle')
-                    ->info('If true - JmsJobsQueueBundle is required')
-                    ->defaultTrue()
-                ->end()
-                ->booleanNode('use_default_sockets_provider')
-                    ->defaultTrue()
-                ->end()
-                ->booleanNode('use_default_email_provider')
-                    ->defaultTrue()
+                ->arrayNode('types')
+                    ->children()
+                        ->arrayNode('email')
+                            ->children()
+                                ->scalarNode('from')
+                                    ->isRequired()
+                                    ->end()
+                                ->booleanNode('default_provider')
+                                    ->defaultTrue()
+                                    ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('push')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('default_provider')
+                                ->defaultTrue()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;

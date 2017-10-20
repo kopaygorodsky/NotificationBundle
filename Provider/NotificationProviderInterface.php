@@ -7,5 +7,5 @@ use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 interface NotificationProviderInterface
 {
     public function send(NotificationMessageInterface $message): void;
-    public function support(NotificationMessageInterface $message): bool;
+    public function supports(NotificationMessageInterface $message): bool;
 }

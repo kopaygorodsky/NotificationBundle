@@ -14,7 +14,7 @@ class DefaultController extends Controller
         $email = new NotificationEmail();
         $email->setTitle('test');
         $email->setMessage('test');
-        $email->setFromEmail('Lol <lol@lol.com>');
+        $email->setFromEmail('lol@lol.com');
         $this->get('event_dispatcher')->dispatch(NotificationEventInterface::NOTIFICATION_CREATED, new NotificationEvent($email));
         die('controller');
     }

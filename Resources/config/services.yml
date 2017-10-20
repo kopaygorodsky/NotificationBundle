@@ -13,12 +13,12 @@ services:
         class: Kopay\NotificationBundle\Provider\EmailNotificationProvider
         arguments: ['@mailer']
         tags:
-            - {name: kopaygorodsky_notifications.send_provider}
+            - {name: kopaygorodsky_notifications.sending_provider, type: email, lol: lol}
 
     kopaygorodsky_notification.sending_provider.push:
         class: Kopay\NotificationBundle\Provider\PushNotificationProvider
         tags:
-            - {name: kopaygorodsky_notifications.send_provider}
+            - {name: kopaygorodsky_notifications.sending_provider, type: push}
 
     kopaygorodsky_notification.job_provider:
         class: Kopay\NotificationBundle\Job\JmsJobBundleProvider

@@ -7,7 +7,7 @@ use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 abstract class AbstractEmailNotificationProvider extends AbstractNotificationProvider
 {
-    public function support(NotificationMessageInterface $notification): bool
+    public function supports(NotificationMessageInterface $notification): bool
     {
         return $notification instanceof NotificationEmailInterface;
     }

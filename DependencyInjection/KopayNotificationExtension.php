@@ -2,8 +2,6 @@
 
 namespace Kopay\NotificationBundle\DependencyInjection;
 
-use JMS\JobQueueBundle\JMSJobQueueBundle;
-use Kopay\NotificationBundle\KopayNotificationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -23,20 +21,9 @@ final class KopayNotificationExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+        //dump($config);die;
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-
-        $bundles = array_flip($container->getParameter('kernel.bundles'));
-
-        if (true === $config['use_jms_job_bundle'] && false === array_key_exists(JMSJobQueueBundle::class, $bundles)) {
-            throw new \LogicException(
-                sprintf(
-                    'Cannot register "%s" without "%s when use_jms_job_bundle is true".',
-                    KopayNotificationBundle::class,
-                    JMSJobQueueBundle::class
-                )
-            );
-        }
     }
 }

@@ -13,7 +13,7 @@ class PushNotificationProvider extends AbstractNotificationProvider
         // TODO: Implement send() method.
     }
 
-    public function support(NotificationMessageInterface $notification): bool
+    public function supports(NotificationMessageInterface $notification): bool
     {
         return $notification instanceof NotificationPush;
     }
