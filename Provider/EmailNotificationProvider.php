@@ -1,9 +1,9 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Provider;
+namespace Kopay\NotificationBundle\Provider;
 
-use Kopaygorodsky\NotificationBundle\Entity\NotificationEmailInterface;
-use Kopaygorodsky\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Entity\NotificationEmailInterface;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class EmailNotificationProvider extends AbstractEmailNotificationProvider

@@ -1,4 +1,4 @@
-Kopaygorodsky\NotificationBundle\Entity\NotificationEmail:
+Kopay\NotificationBundle\Entity\NotificationEmail:
     type: entity
     table: null
     fields:

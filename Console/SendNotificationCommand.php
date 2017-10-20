@@ -1,21 +1,22 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Console;
+namespace Kopay\NotificationBundle\Console;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityNotFoundException;
-use Kopaygorodsky\NotificationBundle\Entity\Notification;
-use Kopaygorodsky\NotificationBundle\Event\NotificationEvent;
-use Kopaygorodsky\NotificationBundle\Event\NotificationEventFailed;
-use Kopaygorodsky\NotificationBundle\Event\NotificationEventInterface;
-use Kopaygorodsky\NotificationBundle\Provider\NotificationProviderInterface;
+use Kopay\NotificationBundle\Entity\Notification;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Event\NotificationEvent;
+use Kopay\NotificationBundle\Event\NotificationEventFailed;
+use Kopay\NotificationBundle\Event\NotificationEventInterface;
+use Kopay\NotificationBundle\Provider\NotificationProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SendNotificationCommand extends Command
+class SendNotificationCommand extends Command implements NotificationCommandInterface
 {
     /**
      * @var array|NotificationProviderInterface[]
@@ -48,18 +49,13 @@ class SendNotificationCommand extends Command
             ->setName(NotificationCommandInterface::SEND_NOTIFICATION)
             ->addArgument('notification', InputArgument::REQUIRED, 'Notification id')
             ->setDescription('Send notification')
-            //->setHidden(true)
+            ->setHidden(true)
         ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $notification = $this->objectManager->getRepository(Notification::class)->find($notificationId = $input->getArgument('notification'));
-
-        if (!$notification) {
-            throw new EntityNotFoundException(sprintf('Notification with id %s not found', $notificationId));
-        }
-
+        $notification = $this->getNotification($notificationId = $input->getArgument('notification'));
         $event = new NotificationEvent($notification);
 
         $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_PRE_SEND, $event);
@@ -78,5 +74,21 @@ class SendNotificationCommand extends Command
             $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_FAILED, new NotificationEventFailed($notification, $exception));
             throw $exception;
         }
+    }
+
+    /**
+     * @param $id
+     * @return NotificationMessageInterface
+     * @throws EntityNotFoundException
+     */
+    public function getNotification($id): NotificationMessageInterface
+    {
+        $notification = $this->objectManager->getRepository(Notification::class)->find($id);
+
+        if (!$notification) {
+            throw new EntityNotFoundException(sprintf('Notification with id %s not found', $id));
+        }
+
+        return $notification;
     }
 }

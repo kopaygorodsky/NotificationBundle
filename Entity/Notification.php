@@ -1,6 +1,6 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Entity;
+namespace Kopay\NotificationBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,9 +34,20 @@ abstract class Notification implements NotificationMessageInterface
      */
     protected $message;
 
+    /**
+     * @var bool
+     */
+    protected $seen = false;
+
+    /**
+     * @var \DateTime
+     */
+    protected $createdAt;
+
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     /**
@@ -45,14 +56,6 @@ abstract class Notification implements NotificationMessageInterface
     public function getId(): ? int
     {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(? int $id): void
-    {
-        $this->id = $id;
     }
 
     /**
@@ -93,5 +96,29 @@ abstract class Notification implements NotificationMessageInterface
     public function setTitle(? string $title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSeen(): bool
+    {
+        return $this->seen;
+    }
+
+    /**
+     * @param bool $seen
+     */
+    public function setSeen(bool $seen): void
+    {
+        $this->seen = $seen;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle;
+namespace Kopay\NotificationBundle;
 
-use Kopaygorodsky\NotificationBundle\DependencyInjection\Compiler\RegisterTagServicesPass;
+use Kopay\NotificationBundle\DependencyInjection\Compiler\RegisterTagServicesPass;
+use Kopay\NotificationBundle\DependencyInjection\Compiler\ValidateConsoleCommand;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class KopaygorodskyNotificationBundle extends Bundle
+class KopayNotificationBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
@@ -17,6 +18,9 @@ class KopaygorodskyNotificationBundle extends Bundle
                 'kopaygorodsky_notification.console.send_notification',
                 'kopaygorodsky_notifications.send_provider'
             )
+        );
+        $container->addCompilerPass(
+            new ValidateConsoleCommand('kopaygorodsky_notification.console.send_notification')
         );
     }
 }

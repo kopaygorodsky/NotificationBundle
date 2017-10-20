@@ -1,6 +1,6 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Tests\Controller;
+namespace Kopay\NotificationBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

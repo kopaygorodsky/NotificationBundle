@@ -1,4 +1,4 @@
-Kopaygorodsky\NotificationBundle\Entity\NotificationPush:
+Kopay\NotificationBundle\Entity\NotificationPush:
     type: entity
     table: null
     lifecycleCallbacks: {  }

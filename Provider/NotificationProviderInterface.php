@@ -1,8 +1,8 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Provider;
+namespace Kopay\NotificationBundle\Provider;
 
-use Kopaygorodsky\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 interface NotificationProviderInterface
 {

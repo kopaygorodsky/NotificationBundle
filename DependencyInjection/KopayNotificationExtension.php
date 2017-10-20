@@ -1,9 +1,9 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\DependencyInjection;
+namespace Kopay\NotificationBundle\DependencyInjection;
 
 use JMS\JobQueueBundle\JMSJobQueueBundle;
-use Kopaygorodsky\NotificationBundle\KopaygorodskyNotificationBundle;
+use Kopay\NotificationBundle\KopayNotificationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-final class KopaygorodskyNotificationExtension extends Extension
+final class KopayNotificationExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -33,7 +33,7 @@ final class KopaygorodskyNotificationExtension extends Extension
             throw new \LogicException(
                 sprintf(
                     'Cannot register "%s" without "%s when use_jms_job_bundle is true".',
-                    KopaygorodskyNotificationBundle::class,
+                    KopayNotificationBundle::class,
                     JMSJobQueueBundle::class
                 )
             );

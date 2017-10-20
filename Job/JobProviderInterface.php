@@ -1,8 +1,8 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Job;
+namespace Kopay\NotificationBundle\Job;
 
-use Kopaygorodsky\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 interface JobProviderInterface
 {

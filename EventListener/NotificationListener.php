@@ -1,10 +1,10 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\EventListener;
+namespace Kopay\NotificationBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Kopaygorodsky\NotificationBundle\Event\NotificationEventInterface;
-use Kopaygorodsky\NotificationBundle\Job\JobProviderInterface;
+use Kopay\NotificationBundle\Event\NotificationEventInterface;
+use Kopay\NotificationBundle\Job\JobProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

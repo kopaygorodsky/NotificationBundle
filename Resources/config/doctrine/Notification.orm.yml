@@ -1,7 +1,7 @@
-Kopaygorodsky\NotificationBundle\Entity\Notification:
+Kopay\NotificationBundle\Entity\Notification:
     type: entity
     table: null
-    repositoryClass: Kopaygorodsky\NotificationBundle\Repository\NotificationRepository
+    repositoryClass: Kopay\NotificationBundle\Repository\NotificationRepository
     inheritanceType: SINGLE_TABLE
     discriminatorColumn:
         name: discr_type
@@ -11,7 +11,7 @@ Kopaygorodsky\NotificationBundle\Entity\Notification:
         push: NotificationPush
     id:
         id:
-            type: integer
+            type: bigint
             id: true
             generator:
                 strategy: AUTO
@@ -23,4 +23,8 @@ Kopaygorodsky\NotificationBundle\Entity\Notification:
         message:
             type: text
             nullable: true
+        createdAt:
+            type: datetime
+        seen:
+            type: boolean
     lifecycleCallbacks: {  }

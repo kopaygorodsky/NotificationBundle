@@ -1,9 +1,9 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Provider;
+namespace Kopay\NotificationBundle\Provider;
 
-use Kopaygorodsky\NotificationBundle\Entity\NotificationMessageInterface;
-use Kopaygorodsky\NotificationBundle\Entity\NotificationPush;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Entity\NotificationPush;
 
 class PushNotificationProvider extends AbstractNotificationProvider
 {

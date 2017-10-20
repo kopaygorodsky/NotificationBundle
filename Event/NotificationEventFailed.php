@@ -1,8 +1,8 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Event;
+namespace Kopay\NotificationBundle\Event;
 
-use Kopaygorodsky\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class NotificationEventFailed extends NotificationEvent

@@ -1,11 +1,14 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Entity;
+namespace Kopay\NotificationBundle\Entity;
+
+use Symfony\Component\Validator\Constraints as Assert;
 
 class NotificationEmail extends Notification implements NotificationEmailInterface
 {
     /**
      * @var string
+     * @Assert\Email(strict=true)
      */
     protected $fromEmail;
 

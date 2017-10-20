@@ -1,11 +1,11 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Job;
+namespace Kopay\NotificationBundle\Job;
 
 use Doctrine\ORM\EntityManager;
 use JMS\JobQueueBundle\Entity\Job;
-use Kopaygorodsky\NotificationBundle\Console\NotificationCommandInterface;
-use Kopaygorodsky\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Console\NotificationCommandInterface;
+use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 class JmsJobBundleProvider implements JobProviderInterface
 {

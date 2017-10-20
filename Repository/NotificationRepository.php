@@ -1,6 +1,6 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Repository;
+namespace Kopay\NotificationBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

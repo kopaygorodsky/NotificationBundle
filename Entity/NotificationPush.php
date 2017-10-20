@@ -1,6 +1,6 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Entity;
+namespace Kopay\NotificationBundle\Entity;
 
 class NotificationPush extends Notification
 {

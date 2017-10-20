@@ -1,6 +1,6 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\DependencyInjection\Compiler;
+namespace Kopay\NotificationBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,6 +37,7 @@ final class RegisterTagServicesPass implements CompilerPassInterface
         if (false === $container->hasDefinition($this->registry)) {
             return;
         }
+
         $registry = $container->findDefinition($this->registry);
         $taggedServices = $this->findReferences($container, $this->tagName);
         $registry->addArgument($taggedServices);

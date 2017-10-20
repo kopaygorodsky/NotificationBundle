@@ -1,6 +1,6 @@
 <?php
 
-namespace Kopaygorodsky\NotificationBundle\Provider;
+namespace Kopay\NotificationBundle\Provider;
 
 
 abstract class AbstractNotificationProvider implements NotificationProviderInterface
