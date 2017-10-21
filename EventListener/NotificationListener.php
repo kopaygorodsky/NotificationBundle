@@ -49,7 +49,7 @@ class NotificationListener
         $errors = $this->validator->validate($notification);
 
         if ($errors->count() > 0) {
-            throw new ValidatorException($errors[0]->getMessage());
+            //throw new ValidatorException($errors[0]->getMessage());
         }
 
         $this->objectManager->persist($notification);

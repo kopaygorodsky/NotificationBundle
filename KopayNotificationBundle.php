@@ -15,18 +15,11 @@ class KopayNotificationBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new DisableDefaultProviders());
         $container->addCompilerPass(
             new RegisterTagServicesPass(
                 'kopaygorodsky_notification.console.send_notification',
                 'kopaygorodsky_notifications.sending_provider'
             )
-        );
-        $container->addCompilerPass(
-            new ValidateConsoleCommand('kopaygorodsky_notification.console.send_notification')
-        );
-        $container->addCompilerPass(
-            new ValidateJobProvider('kopaygorodsky_notification.job_provider')
         );
     }
 }

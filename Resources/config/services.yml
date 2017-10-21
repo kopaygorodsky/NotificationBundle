@@ -30,3 +30,8 @@ services:
         ## sending providers added in compiler pass
         tags:
             - { name: console.command }
+
+    kopaygorodsky_notification.metadata_listener:
+        class: Kopay\NotificationBundle\EventListener\NotificationMetadataListener
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata }
