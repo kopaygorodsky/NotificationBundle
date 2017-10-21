@@ -13,7 +13,7 @@ services:
         class: Kopay\NotificationBundle\Provider\EmailNotificationProvider
         arguments: ['@mailer']
         tags:
-            - {name: kopaygorodsky_notifications.sending_provider, type: email, lol: lol}
+            - {name: kopaygorodsky_notifications.sending_provider, type: email}
 
     kopaygorodsky_notification.sending_provider.push:
         class: Kopay\NotificationBundle\Provider\PushNotificationProvider

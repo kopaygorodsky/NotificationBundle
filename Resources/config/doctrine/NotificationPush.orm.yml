@@ -1,4 +1,8 @@
 Kopay\NotificationBundle\Entity\NotificationPush:
     type: entity
     table: null
+    fields:
+        value:
+            type: json
+            nullable: true
     lifecycleCallbacks: {  }
