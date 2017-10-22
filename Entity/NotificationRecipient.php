@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class NotificationRecipient implements NotificationRecipientInterface
 {
     /**
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -81,9 +81,9 @@ class NotificationRecipient implements NotificationRecipientInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getId(): ? int
+    public function getId(): string
     {
         return $this->id;
     }

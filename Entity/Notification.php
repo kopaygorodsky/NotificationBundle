@@ -11,7 +11,7 @@ abstract class Notification implements NotificationMessageInterface
 {
 
     /**
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -47,9 +47,9 @@ abstract class Notification implements NotificationMessageInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getId(): ? int
+    public function getId(): string
     {
         return $this->id;
     }
