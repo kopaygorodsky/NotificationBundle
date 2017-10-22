@@ -4,7 +4,6 @@ namespace Kopay\NotificationBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class Notification implements NotificationMessageInterface
@@ -22,7 +21,7 @@ abstract class Notification implements NotificationMessageInterface
      *      minMessage = "You must specify at least one receiver",
      * )
      */
-    protected $recipients;
+    protected $recipientsItems;
 
     /**
      * @var string
@@ -35,18 +34,13 @@ abstract class Notification implements NotificationMessageInterface
     protected $message;
 
     /**
-     * @var bool
-     */
-    protected $seen = false;
-
-    /**
      * @var \DateTime
      */
     protected $createdAt;
 
     public function __construct()
     {
-        $this->recipients = new ArrayCollection();
+        $this->recipientsItems = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -59,11 +53,27 @@ abstract class Notification implements NotificationMessageInterface
     }
 
     /**
-     * @return Collection|UserInterface[]
+     * @return Collection|NotificationRecipient[]
      */
-    public function getRecipients(): Collection
+    public function getRecipientsItems(): Collection
     {
-        return $this->recipients;
+        return $this->recipientsItems;
+    }
+
+    /**
+     * @param NotificationRecipientInterface $notificationRecipient
+     */
+    public function addRecipientItem(NotificationRecipientInterface $notificationRecipient): void
+    {
+        $this->recipientsItems->add($notificationRecipient);
+    }
+
+    /**
+     * @param NotificationRecipientInterface $notificationRecipient
+     */
+    public function removeRecipientItem(NotificationRecipientInterface $notificationRecipient): void
+    {
+        $this->recipientsItems->removeElement($notificationRecipient);
     }
 
     /**
@@ -96,22 +106,6 @@ abstract class Notification implements NotificationMessageInterface
     public function setTitle(? string $title): void
     {
         $this->title = $title;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSeen(): bool
-    {
-        return $this->seen;
-    }
-
-    /**
-     * @param bool $seen
-     */
-    public function setSeen(bool $seen): void
-    {
-        $this->seen = $seen;
     }
 
     /**

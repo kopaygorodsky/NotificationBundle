@@ -1,0 +1,17 @@
+Kopay\NotificationBundle\Entity\NotificationRecipient:
+    type: entity
+    table: null
+    id:
+        id:
+            type: bigint
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        seen:
+            type: boolean
+    manyToOne:
+        notification:
+            targetEntity: Kopay\NotificationBundle\Entity\Notification
+            inversedBy: recipientsItems
+    lifecycleCallbacks: {  }

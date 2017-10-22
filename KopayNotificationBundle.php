@@ -2,10 +2,9 @@
 
 namespace Kopay\NotificationBundle;
 
-use Kopay\NotificationBundle\DependencyInjection\Compiler\DisableDefaultProviders;
 use Kopay\NotificationBundle\DependencyInjection\Compiler\RegisterTagServicesPass;
-use Kopay\NotificationBundle\DependencyInjection\Compiler\ValidateConsoleCommand;
-use Kopay\NotificationBundle\DependencyInjection\Compiler\ValidateJobProvider;
+use Kopay\NotificationBundle\DependencyInjection\Compiler\RegisterUserProviderClass;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -21,5 +20,7 @@ class KopayNotificationBundle extends Bundle
                 'kopaygorodsky_notifications.sending_provider'
             )
         );
+        // set 1 priority to run it before doctrine compiler passes
+        $container->addCompilerPass(new RegisterUserProviderClass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
     }
 }

@@ -25,6 +25,8 @@ Kopay\NotificationBundle\Entity\Notification:
             nullable: true
         createdAt:
             type: datetime
-        seen:
-            type: boolean
+    oneToMany:
+        recipientsItems:
+            targetEntity: Kopay\NotificationBundle\Entity\NotificationRecipient
+            mappedBy: notification
     lifecycleCallbacks: {  }

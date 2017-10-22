@@ -7,6 +7,7 @@ use Kopay\NotificationBundle\Console\NotificationCommandInterface;
 use Kopay\NotificationBundle\Job\JmsJobBundleProvider;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -17,6 +18,8 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 final class KopayNotificationExtension extends Extension
 {
+    const METADATA_LISTENER = 'kopaygorodsky_notification.metadata_listener';
+
     /**
      * {@inheritdoc}
      */
@@ -24,7 +27,6 @@ final class KopayNotificationExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        //dump($config);die;
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -33,6 +35,17 @@ final class KopayNotificationExtension extends Extension
         $this->validateJobProvider($config, $container);
         $this->validateConsoleCommand($config, $container);
 
+        $listenerDefinition = $container->getDefinition(self::METADATA_LISTENER);
+
+        if (isset($config['recipientClass']) && !empty($config['recipientClass'])) {
+            $userClass = $config['recipientClass'];
+
+            if (!class_exists($userClass)) {
+                throw new \LogicException(sprintf('Recipient class %s does not exist', $userClass));
+            }
+
+            $listenerDefinition->addArgument($userClass);
+        }
     }
 
     /**

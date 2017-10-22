@@ -18,10 +18,12 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('kopay_notification');
+        $rootNode = $treeBuilder->root('kopay_notification')->isRequired();
 
         $rootNode
             ->children()
+                ->scalarNode('recipientClass')
+                    ->end()
                 ->arrayNode('types')
                     ->children()
                         ->arrayNode('email')
