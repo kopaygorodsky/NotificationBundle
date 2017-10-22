@@ -16,7 +16,6 @@
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "symfony/swiftmailer-bundle": "^2.3.10",
-        "jms/job-queue-bundle": "dev-master",
         "symfony/console": "^2.8|^3.0",
         "egulias/email-validator": "~2.0"
     },
