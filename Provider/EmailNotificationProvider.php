@@ -38,8 +38,8 @@ class EmailNotificationProvider extends AbstractEmailNotificationProvider
      */
     protected function getReceiversEmails(NotificationEmailInterface $notification): array
     {
-        return $notification->getRecipients()->map(function ($recipient) {
-            return $recipient->getEmail();
+        return $notification->getRecipientsItems()->map(function ($recipientItem) {
+            return $recipientItem->getRecipient()->getEmail()();
         })->toArray();
     }
 }
