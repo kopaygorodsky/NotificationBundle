@@ -2,6 +2,7 @@
 
 namespace Kopay\NotificationBundle\Entity;
 
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class NotificationRecipient implements NotificationRecipientInterface
@@ -25,6 +26,11 @@ class NotificationRecipient implements NotificationRecipientInterface
      * @var bool
      */
     protected $seen = false;
+
+    public function __construct()
+    {
+        $this->id = Uuid::uuid4();
+    }
 
     /**
      * @return NotificationMessageInterface

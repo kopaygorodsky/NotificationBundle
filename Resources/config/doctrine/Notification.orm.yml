@@ -11,10 +11,8 @@ Kopay\NotificationBundle\Entity\Notification:
         push: NotificationPush
     id:
         id:
-            type: bigint
+            type: guid
             id: true
-            generator:
-                strategy: AUTO
     fields:
         title:
             type: string
@@ -29,4 +27,5 @@ Kopay\NotificationBundle\Entity\Notification:
         recipientsItems:
             targetEntity: Kopay\NotificationBundle\Entity\NotificationRecipient
             mappedBy: notification
+            cascade: ['persist', 'remove']
     lifecycleCallbacks: {  }
