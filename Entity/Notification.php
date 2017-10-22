@@ -4,6 +4,7 @@ namespace Kopay\NotificationBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class Notification implements NotificationMessageInterface
@@ -40,6 +41,7 @@ abstract class Notification implements NotificationMessageInterface
 
     public function __construct()
     {
+        $this->id = Uuid::uuid4()->toString();
         $this->recipientsItems = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }

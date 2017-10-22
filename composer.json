@@ -5,7 +5,7 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Vlad Kopay",
+            "name": "Vlad Kopaygorodsky",
             "email": "vlad.kopaygorodsky@gmail.com",
             "homepage": "https://github.com/kopaygorodsky"
         }
@@ -17,7 +17,8 @@
         "doctrine/orm": "^2.5",
         "symfony/swiftmailer-bundle": "^2.3.10",
         "symfony/console": "^2.8|^3.0",
-        "egulias/email-validator": "~2.0"
+        "egulias/email-validator": "~2.0",
+        "ramsey/uuid": "^3.7.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8|^5.0",

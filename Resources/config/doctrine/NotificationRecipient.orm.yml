@@ -3,10 +3,8 @@ Kopay\NotificationBundle\Entity\NotificationRecipient:
     table: null
     id:
         id:
-            type: bigint
+            type: guid
             id: true
-            generator:
-                strategy: AUTO
     fields:
         seen:
             type: boolean
