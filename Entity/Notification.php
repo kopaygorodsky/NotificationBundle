@@ -115,4 +115,14 @@ abstract class Notification implements NotificationMessageInterface
     {
         return $this->createdAt;
     }
+
+    /**
+     * @param $recipient
+     */
+    public function addRecipient($recipient): void
+    {
+        $item = new NotificationRecipient();
+        $item->setRecipient($recipient);
+        $this->addRecipientItem($item);
+    }
 }
