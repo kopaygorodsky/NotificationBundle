@@ -29,4 +29,5 @@ Kopay\NotificationBundle\Entity\Notification:
         recipientsItems:
             targetEntity: Kopay\NotificationBundle\Entity\NotificationRecipient
             mappedBy: notification
+            cascade: ['persist', 'remove']
     lifecycleCallbacks: {  }
