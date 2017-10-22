@@ -12,7 +12,7 @@ class DefaultController extends Controller
     public function indexAction()
     {
         $email = new NotificationEmail();
-        $email->addRecipient('....');
+        $email->addRecipient($someUserEntity);
         $email->setTitle('test');
         $email->setMessage('test');
         $email->setFromEmail('lol@lol.com');
