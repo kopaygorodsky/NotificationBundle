@@ -20,6 +20,5 @@ class JmsJobBundleProvider implements JobProviderInterface
     {
         $job = new Job(NotificationCommandInterface::SEND_NOTIFICATION, [$notification->getId()]);
         $this->entityManager->persist($job);
-        $this->entityManager->flush();
     }
 }

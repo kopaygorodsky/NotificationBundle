@@ -53,7 +53,6 @@ class NotificationListener
         }
 
         $this->objectManager->persist($notification);
-        $this->objectManager->flush();
 
         $this->dispatcher->dispatch(NotificationEventInterface::NOTIFICATION_POST_PERSIST, $event);
 
