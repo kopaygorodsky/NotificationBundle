@@ -41,6 +41,6 @@
     },
     "target-dir": "kopaygorodsky/NotificationBundle",
     "extra": {
-        "branch-alias": null
+        "branch-alias": "dev"
     }
 }
