@@ -36,6 +36,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
-#    kopay_notify.manager:
-#        class: Kopay\NotificationBundle\Service\NotificationManager
-#        arguments: ["%kopay_notify"]
+    kopay_notify.manager:
+        class: Kopay\NotificationBundle\Service\NotificationManager
+        arguments: ["%kopay_notify"]
