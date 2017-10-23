@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 final class KopayNotificationExtension extends Extension
 {
-    const METADATA_LISTENER = 'kopaygorodsky_notification.metadata_listener';
+    const METADATA_LISTENER = 'kopay_notify.metadata_listener';
 
     /**
      * {@inheritdoc}
@@ -56,14 +56,14 @@ final class KopayNotificationExtension extends Extension
     {
         if (isset($config['types'])) {
             if (isset($config['types']['email']['default_provider']) && false === $config['types']['email']['default_provider']) {
-                $container->removeDefinition('kopaygorodsky_notification.sending_provider.email');
+                $container->removeDefinition('kopay_notify.sending_provider.email');
             }
             if (isset($config['types']['push']['default_provider']) && false === $config['types']['push']['default_provider']) {
-                $container->removeDefinition('kopaygorodsky_notification.sending_provider.push');
+                $container->removeDefinition('kopay_notify.sending_provider.push');
             }
         }
 
-        $taggedServices = $container->findTaggedServiceIds('kopaygorodsky_notifications.sending_provider');
+        $taggedServices = $container->findTaggedServiceIds('kopay_notify.sending_provider');
         $providers = ['email' => 0, 'push' => 0];
 
         foreach ($taggedServices as $id => $tags) {
@@ -89,7 +89,7 @@ final class KopayNotificationExtension extends Extension
      */
     private function validateJobProvider(array $config, ContainerBuilder $container): void
     {
-        $registry = $container->findDefinition('kopaygorodsky_notification.job_provider');
+        $registry = $container->findDefinition('kopay_notify.job_provider');
 
         if ($registry->getClass() === JmsJobBundleProvider::class) {
             $bundles = array_flip($container->getParameter('kernel.bundles'));
@@ -112,7 +112,7 @@ final class KopayNotificationExtension extends Extension
      */
     private function validateConsoleCommand(array $config, ContainerBuilder $container): void
     {
-        $registry = $container->findDefinition('kopaygorodsky_notification.console.send_notification');
+        $registry = $container->findDefinition('kopay_notify.console.send_notification');
 
         if (!array_key_exists(NotificationCommandInterface::class, class_implements($registry->getClass()))) {
             throw new \LogicException(sprintf('Console command %s must implement %s', $registry->getClass(), NotificationCommandInterface::class));

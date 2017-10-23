@@ -16,8 +16,8 @@ class KopayNotificationBundle extends Bundle
 
         $container->addCompilerPass(
             new RegisterTagServicesPass(
-                'kopaygorodsky_notification.console.send_notification',
-                'kopaygorodsky_notifications.sending_provider'
+                'kopay_notify.console.send_notification',
+                'kopay_notify.sending_provider'
             )
         );
         // set 1 priority to run it before doctrine compiler passes

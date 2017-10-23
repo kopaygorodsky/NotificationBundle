@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('kopay_notification')->isRequired();
+        $rootNode = $treeBuilder->root('kopay_notify')->isRequired();
 
         $rootNode
             ->children()
@@ -28,6 +28,8 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('email')
                             ->children()
+                                ->variableNode('from')
+                                    ->end()
                                 ->booleanNode('default_provider')
                                     ->defaultTrue()
                                     ->end()

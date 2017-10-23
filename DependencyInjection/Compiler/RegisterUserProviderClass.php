@@ -10,7 +10,7 @@ final class RegisterUserProviderClass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $bundleConfig = $container->getExtensionConfig('kopay_notification');
+        $bundleConfig = $container->getExtensionConfig('kopay_notify');
 
         //do not check security provider if recipientClass is defined
         if (isset($bundleConfig[0]['recipientClass'])) {

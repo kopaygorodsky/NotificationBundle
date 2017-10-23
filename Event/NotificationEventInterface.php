@@ -6,12 +6,12 @@ use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 interface NotificationEventInterface
 {
-    const NOTIFICATION_CREATED = 'kopaygorodsky.notification.message.created';
-    const NOTIFICATION_POST_PERSIST = 'kopaygorodsky.notification.message.postPersist';
-    const JOB_CREATED = 'kopaygorodsky.notification.job.created';
-    const JOB_PRE_SEND = 'kopaygorodsky.notification.job.preSend';
-    const JOB_POST_SEND = 'kopaygorodsky.notification.job.postSend';
-    const JOB_FAILED = 'kopaygorodsky.notification.job.failed';
+    const NOTIFICATION_CREATED = 'kopay.notify.message.created';
+    const NOTIFICATION_POST_PERSIST = 'kopay.notify.message.postPersist';
+    const JOB_CREATED = 'kopay.notify.job.created';
+    const JOB_PRE_SEND = 'kopay.notify.job.preSend';
+    const JOB_POST_SEND = 'kopay.notify.job.postSend';
+    const JOB_FAILED = 'kopay.notify.job.failed';
 
     public function getNotification(): NotificationMessageInterface;
     public function setNotification(NotificationMessageInterface $message): void;
