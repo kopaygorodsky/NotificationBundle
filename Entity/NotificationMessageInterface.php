@@ -1,11 +1,10 @@
 <?php
 
-namespace Kopay\NotificationBundle\Entity;
+  namespace Kopay\NotificationBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
+  use Doctrine\Common\Collections\Collection;
 
-interface NotificationMessageInterface
-{
+  interface NotificationMessageInterface {
     public function getId();
 
     /**
@@ -21,9 +20,19 @@ interface NotificationMessageInterface
     public function getMessage(): ? string;
 
     /**
+     * @param null|string $message
+     */
+    public function setMessage(?string $message): void;
+
+    /**
      * Get title/subject of notification
      *
      * @return null|string
      */
     public function getTitle(): ? string;
-}
+
+    /**
+     * @param null|string $title
+     */
+    public function setTitle(?string $title): void;
+  }

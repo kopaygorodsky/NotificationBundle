@@ -7,7 +7,6 @@
 
   namespace Kopay\NotificationBundle\Service;
 
-  use Kopay\NotificationBundle\Entity\Notification;
   use Kopay\NotificationBundle\Entity\NotificationEmail;
   use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
   use Kopay\NotificationBundle\Entity\NotificationPush;
@@ -24,10 +23,14 @@
      */
     private $configuration;
 
-    protected const NOTIFICATION_TYPE = [
-        'Push'  => 0,
-        'Email' => 1,
-    ];
+    protected const NOTIFICATION_EMAIL = 0;
+
+    protected const NOTIFICATION_PUSH  = 1;
+
+    /**
+     * @var NotificationMessageInterface
+     */
+    protected $notification = null;
 
     /**
      * NotificationManager constructor.
@@ -41,53 +44,127 @@
 
     /**
      * @param int $type
-     * @param array $options
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
      */
-    public function create(int $type, array $options): ?NotificationMessageInterface
+    public function create(int $type): ?NotificationManager
     {
-      if(!isset($options['recipients']) || empty($options['recipients'])){
-        throw new InvalidArgumentException('Option "recipients" is 
-        required to create notification.');
-      }
-
-      if(!in_array($type, self::NOTIFICATION_TYPE)){
+      if ($type !== self::NOTIFICATION_EMAIL && $type !== self::NOTIFICATION_EMAIL) {
         throw new InvalidArgumentException('Unknown type of notification.');
       }
 
-      $title = (isset($options['title'])) ? $options['title'] : '';
-      $message = (isset($options['message'])) ? $options['message'] : '';
-
       switch ($type) {
-        case self::NOTIFICATION_TYPE['Push']:
-          $notification = new NotificationPush();
-          $value = (isset($options['value'])) ? $options['value'] : [];
-          $notification->setValue($value);
+        case self::NOTIFICATION_EMAIL:
+          $this->notification = new NotificationEmail();
           break;
-        case self::NOTIFICATION_TYPE['Email']:
-          $notification = new NotificationEmail();
-          $from = (isset($options['from'])) ? $options['from'] :
-              $this->configuration['types']['email']['from'];
-          $notification->setFromEmail($from);
+        case self::NOTIFICATION_PUSH:
+          $this->notification = new NotificationPush();
           break;
       }
 
-      $notification->setTitle($title);
-      $notification->setMessage($message);
-
-      foreach ($options['recipients'] as $recipient){
-        $notification->addRecipient($recipient);
-      }
-
-      return $notification;
+      return $this;
     }
 
     /**
-     * @param \Kopay\NotificationBundle\Entity\Notification $notification
-     * @param array $options
+     * @param string $title
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
      */
-    public function send(Notification $notification, array $options)
+    public function setTitle(string $title): ?NotificationManager
+    {
+      $this->notification->setTitle($title);
+
+      return $this;
+    }
+
+    /**
+     * @param string $message
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
+     */
+    public function setMessage(string $message): ?NotificationManager
+    {
+      $this->notification->setMessage($message);
+
+      return $this;
+    }
+
+    /**
+     * @param string|null $from
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
+     */
+    public function setFrom(string $from = null): ?NotificationManager
+    {
+      if (!($this->notification instanceof NotificationEmail)) {
+        throw new InvalidArgumentException('Can\'t set from to push notification.');
+      }
+
+      if (is_null($from)) {
+        $from = $this->configuration['types']['email']['from'];
+      }
+
+      $this->notification->setFromEmail($from);
+
+      return $this;
+    }
+
+    /**
+     * @param array $recipients
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
+     */
+    public function setRecipients(array $recipients): ?NotificationManager
+    {
+      if (empty($recipients)) {
+        throw new InvalidArgumentException('At least one recipient required.');
+      }
+
+      foreach ($recipients as $recipient) {
+        $this->notification->addRecipient($recipient);
+      }
+
+      return $this;
+    }
+
+    /**
+     * @param array $value
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
+     */
+    public function setValue(array $value): ?NotificationManager
+    {
+      if (!($this->notification instanceof NotificationPush)) {
+        throw new InvalidArgumentException('Can\'t set value to email notification.');
+      }
+
+      if (empty($value)) {
+        throw new InvalidArgumentException('Value can\'t be empty.');
+      }
+
+      $this->notification->setValue($value);
+
+      return $this;
+    }
+
+    /**
+     * @return \Kopay\NotificationBundle\Entity\NotificationMessageInterface|null
+     */
+    public function getEntity(): ?NotificationMessageInterface
+    {
+      return $this->notification;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return \Kopay\NotificationBundle\Service\NotificationManager|null
+     */
+    public function send(array $options): ?NotificationManager
     {
       // TODO: Implement creation of job dependent on notification type. In
       // options available providers and socket ports
+
+      return $this;
     }
   }
