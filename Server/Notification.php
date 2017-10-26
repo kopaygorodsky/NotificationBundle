@@ -67,7 +67,7 @@ class Notification implements MessageComponentInterface
         $data = json_decode($msg, true);
 
         if (isset($data['receiver']) && array_key_exists($data['receiver'], $this->connections)) {
-            $this->connections[$data['receiver']]->send($data['message']);
+            $this->connections[$data['receiver']]->send(json_encode($data['message']));
         }
     }
 
