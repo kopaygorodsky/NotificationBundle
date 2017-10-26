@@ -2,21 +2,22 @@
 
 namespace Kopay\NotificationBundle\Controller;
 
-use Kopay\NotificationBundle\Entity\NotificationEmail;
-use Kopay\NotificationBundle\Event\NotificationEvent;
-use Kopay\NotificationBundle\Event\NotificationEventInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $email = new NotificationEmail();
-        $email->addRecipient($someUserEntity);
-        $email->setTitle('test');
-        $email->setMessage('test');
-        $email->setFromEmail('lol@lol.com');
-        $this->get('event_dispatcher')->dispatch(NotificationEventInterface::NOTIFICATION_CREATED, new NotificationEvent($email));
-        die('controller');
+        \Ratchet\Client\connect('ws://localhost:8080')->then(function($conn) {
+            $data = ['receiver' => 'conn_59f146516d8ad7.11422006', 'message' => 'info'];
+
+            $conn->send(json_encode($data));
+            $conn->close();
+        }, function ($e) {
+            echo "Could not connect: {$e->getMessage()}\n";
+        });
+
+        die();
     }
+
 }

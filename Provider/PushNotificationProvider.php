@@ -7,6 +7,7 @@ use Kopay\NotificationBundle\Entity\NotificationPush;
 
 class PushNotificationProvider extends AbstractNotificationProvider
 {
+
     public function send(NotificationMessageInterface $message): void
     {
         die('lol');

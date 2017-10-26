@@ -27,7 +27,10 @@
         "friendsofphp/php-cs-fixer": "^1.1"
     },
     "suggest": {
-        "jms/job-queue-bundle": "Required when using the default job provider."
+        "jms/job-queue-bundle": "Required when using the default job provider.",
+        "cboden/ratchet": "Create a websocket server",
+        "lexik/jwt-authentication-bundle": "Jwt auth for websockets",
+        "react/zmq": "sockets client"
     },
     "autoload": {
         "psr-4": { "Kopay\\NotificationBundle\\": ""}

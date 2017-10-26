@@ -35,3 +35,12 @@ services:
         class: Kopay\NotificationBundle\EventListener\NotificationMetadataListener
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
+
+    kopaygorodsky_notification.console.start_server:
+        class: Kopay\NotificationBundle\Console\StartWebSocketsServer
+        tags:
+            - { name: console.command }
+
+    kopaygorodsky_notification.websockets.auth_provider:
+        class: Kopay\NotificationBundle\Server\Security\JwtAuthProvider
+        arguments: ['@lexik_jwt_authentication.security.authentication.provider']

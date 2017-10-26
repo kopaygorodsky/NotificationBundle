@@ -5,6 +5,8 @@ namespace Kopay\NotificationBundle\DependencyInjection;
 use JMS\JobQueueBundle\JMSJobQueueBundle;
 use Kopay\NotificationBundle\Console\NotificationCommandInterface;
 use Kopay\NotificationBundle\Job\JmsJobBundleProvider;
+use Kopay\NotificationBundle\Server\Security\JwtAuthProvider;
+use Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
@@ -34,18 +36,8 @@ final class KopayNotificationExtension extends Extension
         $this->validateSendingProviders($config, $container);
         $this->validateJobProvider($config, $container);
         $this->validateConsoleCommand($config, $container);
-
-        $listenerDefinition = $container->getDefinition(self::METADATA_LISTENER);
-
-        if (isset($config['recipientClass']) && !empty($config['recipientClass'])) {
-            $userClass = $config['recipientClass'];
-
-            if (!class_exists($userClass)) {
-                throw new \LogicException(sprintf('Recipient class %s does not exist', $userClass));
-            }
-
-            $listenerDefinition->addArgument($userClass);
-        }
+        $this->validatePushServerConfigs($config, $container);
+        $this->validateRecipientClass($config, $container);
     }
 
     /**
@@ -92,9 +84,7 @@ final class KopayNotificationExtension extends Extension
         $registry = $container->findDefinition('kopaygorodsky_notification.job_provider');
 
         if ($registry->getClass() === JmsJobBundleProvider::class) {
-            $bundles = array_flip($container->getParameter('kernel.bundles'));
-
-            if (false === array_key_exists(JMSJobQueueBundle::class, $bundles)) {
+            if ($this->isBundleEnabled('JMS\JobQueueBundle\JMSJobQueueBundle', $container)) {
                 throw new \LogicException(
                     sprintf(
                         'Cannot register "%s" without "%s registered".',
@@ -117,5 +107,58 @@ final class KopayNotificationExtension extends Extension
         if (!array_key_exists(NotificationCommandInterface::class, class_implements($registry->getClass()))) {
             throw new \LogicException(sprintf('Console command %s must implement %s', $registry->getClass(), NotificationCommandInterface::class));
         }
+    }
+
+    private function validatePushServerConfigs(array $config, ContainerBuilder $container): void
+    {
+        if (isset($config['types']['push']['server'])) {
+            $serverConfig = $config['types']['push']['server'];
+
+            if (false === $serverConfig['default']) {
+                $container->removeDefinition('kopaygorodsky_notification.console.start_server');
+                return;
+            }
+
+            $startServerDefinition = $container->getDefinition('kopaygorodsky_notification.console.start_server');
+            $startServerDefinition->setArgument(0, $serverConfig['port']);
+
+            if (true === $serverConfig['auth']) {
+                if (!$this->isBundleEnabled('Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle', $container)) {
+                    throw new \LogicException(
+                        sprintf(
+                            'Cannot register "%s" without "%s registered. Disable auth or enable LexikJWTAuthenticationBundle".',
+                            JwtAuthProvider::class,
+                            JMSJobQueueBundle::class
+                        )
+                    );
+                }
+                $startServerDefinition->setArgument(1, 'kopaygorodsky_notification.websockets.auth_provider');
+            } else {
+                $container->removeDefinition('kopaygorodsky_notification.websockets.auth_provider');
+            }
+        }
+    }
+
+    private function validateRecipientClass(array $config, ContainerBuilder $container): void
+    {
+        if (isset($config['recipientClass']) && !empty($config['recipientClass'])) {
+            $userClass = $config['recipientClass'];
+
+            if (!class_exists($userClass)) {
+                throw new \LogicException(sprintf('Recipient class %s does not exist', $userClass));
+            }
+            $listenerDefinition = $container->getDefinition(self::METADATA_LISTENER);
+            $listenerDefinition->addArgument($userClass);
+        }
+    }
+
+    /**
+     * @param string $bundle
+     * @param ContainerBuilder $container
+     * @return bool
+     */
+    public function isBundleEnabled(string $bundle, ContainerBuilder $container): bool
+    {
+        return false === array_key_exists($bundle, array_flip($container->getParameter('kernel.bundles')));
     }
 }
