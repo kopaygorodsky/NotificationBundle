@@ -28,21 +28,26 @@ class Notification implements MessageComponentInterface
      */
     public function onOpen(ConnectionInterface $conn)
     {
-        if ($this->authProvider) {
+        $conn->send('You are connected from: '.$conn->remoteAddress);
+
+        if ($conn->remoteAddress === '127.0.0.1') {
+            $conn->uniqueId = uniqid('internal_', true);
+            $this->connections[$conn->uniqueId] = $conn;
+        } else if ($this->authProvider) {
+            //if auth is enabled
             if (null === $authToken = $this->authProvider->authenticate($conn)) {
                 $conn->close(403);
                 return;
-            };
+            }
             $user = $authToken->getUser();
             $conn->uniqueId = $user->getId();
             $this->connections[$user->getId()] = $conn;
         } else {
-            $uniqueId = uniqid('conn_', true);
-            $conn->uniqueId = $uniqueId;
-            $this->connections[$uniqueId] = $conn;
+            $conn->uniqueId = uniqid('conn_', true);
+            $this->connections[$conn->uniqueId] = $conn;
         }
-        echo "New connection $uniqueId\n";
-        //$conn->send('..:: Hello from the Notification Center ::..');
+
+        $conn->send('..:: Hello from the Notification Center ::..');
     }
 
     /**
@@ -53,12 +58,17 @@ class Notification implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
+        //allowed only for internal connections
+        if (false === strpos($from->uniqueId, 'internal_')) {
+            $from->send('You are not allowed to send messages');
+            return;
+        }
+
         $data = json_decode($msg, true);
 
         if (isset($data['receiver']) && array_key_exists($data['receiver'], $this->connections)) {
             $this->connections[$data['receiver']]->send($data['message']);
         }
-        $from->send('Done');
     }
 
     /**

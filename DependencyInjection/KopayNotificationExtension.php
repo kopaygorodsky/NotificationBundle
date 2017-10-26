@@ -128,10 +128,18 @@ final class KopayNotificationExtension extends Extension
             }
 
             $serverDefinition = $container->getDefinition('kopaygorodsky_notification.websocket_server');
-            $serverDefinition->setArgument(0, $serverConfig['port']);
 
             if (true === $serverConfig['auth']) {
-                $serverDefinition->setArgument(1, new Reference('kopaygorodsky_notification.websockets.auth_provider'));
+                $serverDefinition->setArgument(0, new Reference('kopaygorodsky_notification.websockets.auth_provider'));
+            }
+
+            $startServerDefinition = $container->getDefinition('kopaygorodsky_notification.console.start_server');
+            $startServerDefinition->setArgument(0, $serverConfig['port']);
+            $startServerDefinition->setArgument(1, new Reference('kopaygorodsky_notification.websocket_server'));
+
+            if ($container->hasDefinition('kopaygorodsky_notification.sending_provider.push')) {
+                $container->getDefinition('kopaygorodsky_notification.sending_provider.push')
+                    ->setArgument(0, $serverConfig['port']);
             }
         }
     }
