@@ -3,7 +3,6 @@
 namespace Kopay\NotificationBundle\Console;
 
 use Kopay\NotificationBundle\Server\Notification;
-use Kopay\NotificationBundle\Server\Security\AuthProviderInterface;
 use Ratchet\Http\HttpServer;
 use Ratchet\Server\IoServer;
 use Ratchet\WebSocket\WsServer;
@@ -14,20 +13,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 class StartWebSocketsServer extends Command
 {
     /**
-     * @var AuthProviderInterface
+     * @var Notification
      */
-    protected $authProvider;
+    protected $server;
 
     /**
      * @var int
      */
     protected $port;
 
-    public function __construct(int $port, AuthProviderInterface $provider = null)
+    public function __construct(int $port, Notification $server)
     {
         parent::__construct();
         $this->port = $port;
-        $this->authProvider = $provider;
+        $this->server = $server;
     }
 
     public function configure()
@@ -41,9 +40,8 @@ class StartWebSocketsServer extends Command
     {
         $server = IoServer::factory(new HttpServer(
             new WsServer(
-                new Notification()
-            ),
-            $this->authProvider
+                $this->server
+            )
         ), $this->port);
 
         $output->writeln('<info>[OK] Server listening on localhost:8080 </info>');

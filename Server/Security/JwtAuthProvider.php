@@ -4,10 +4,9 @@ namespace Kopay\NotificationBundle\Server\Security;
 
 use function GuzzleHttp\Psr7\parse_query;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Provider\JWTProvider;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Ratchet\ConnectionInterface;
-use function Symfony\Component\Debug\Tests\testHeader;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JwtAuthProvider implements AuthProviderInterface
 {
@@ -18,7 +17,7 @@ class JwtAuthProvider implements AuthProviderInterface
         $this->authenticator = $authenticator;
     }
 
-    public function authenticate(ConnectionInterface $connection): ? JWTUserToken
+    public function authenticate(ConnectionInterface $connection): ? TokenInterface
     {
         $params = parse_query($connection->httpRequest->getUri()->getQuery());
 

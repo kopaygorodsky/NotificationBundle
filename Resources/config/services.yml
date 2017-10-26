@@ -36,6 +36,9 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
+    kopaygorodsky_notification.websocket_server:
+        class: Kopay\NotificationBundle\Server\Notification
+
     kopaygorodsky_notification.console.start_server:
         class: Kopay\NotificationBundle\Console\StartWebSocketsServer
         tags:

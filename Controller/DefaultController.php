@@ -8,6 +8,7 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
+        $this->get('kopaygorodsky_notification.websockets.auth_provider');
         \Ratchet\Client\connect('ws://localhost:8080')->then(function($conn) {
             $data = ['receiver' => 'conn_59f146516d8ad7.11422006', 'message' => 'info'];
 

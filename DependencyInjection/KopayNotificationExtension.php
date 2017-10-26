@@ -10,6 +10,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -40,10 +41,6 @@ final class KopayNotificationExtension extends Extension
         $this->validateRecipientClass($config, $container);
     }
 
-    /**
-     * @param $config
-     * @param ContainerBuilder $container
-     */
     private function validateSendingProviders(array $config, ContainerBuilder $container): void
     {
         if (isset($config['types'])) {
@@ -75,16 +72,12 @@ final class KopayNotificationExtension extends Extension
         }
     }
 
-    /**
-     * @param $config
-     * @param ContainerBuilder $container
-     */
     private function validateJobProvider(array $config, ContainerBuilder $container): void
     {
         $registry = $container->findDefinition('kopaygorodsky_notification.job_provider');
 
         if ($registry->getClass() === JmsJobBundleProvider::class) {
-            if ($this->isBundleEnabled('JMS\JobQueueBundle\JMSJobQueueBundle', $container)) {
+            if (!$this->isBundleEnabled('JMS\JobQueueBundle\JMSJobQueueBundle', $container)) {
                 throw new \LogicException(
                     sprintf(
                         'Cannot register "%s" without "%s registered".',
@@ -114,27 +107,31 @@ final class KopayNotificationExtension extends Extension
         if (isset($config['types']['push']['server'])) {
             $serverConfig = $config['types']['push']['server'];
 
-            if (false === $serverConfig['default']) {
-                $container->removeDefinition('kopaygorodsky_notification.console.start_server');
-                return;
-            }
-
-            $startServerDefinition = $container->getDefinition('kopaygorodsky_notification.console.start_server');
-            $startServerDefinition->setArgument(0, $serverConfig['port']);
-
             if (true === $serverConfig['auth']) {
                 if (!$this->isBundleEnabled('Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle', $container)) {
                     throw new \LogicException(
                         sprintf(
-                            'Cannot register "%s" without "%s registered. Disable auth or enable LexikJWTAuthenticationBundle".',
+                            'Cannot register "%s" without "%s" registered.',
                             JwtAuthProvider::class,
-                            JMSJobQueueBundle::class
+                            'Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle'
                         )
                     );
                 }
-                $startServerDefinition->setArgument(1, 'kopaygorodsky_notification.websockets.auth_provider');
             } else {
                 $container->removeDefinition('kopaygorodsky_notification.websockets.auth_provider');
+            }
+
+            if (false === $serverConfig['default']) {
+                $container->removeDefinition('kopaygorodsky_notification.websocket_server');
+                $container->removeDefinition('kopaygorodsky_notification.console.start_server');
+                return;
+            }
+
+            $serverDefinition = $container->getDefinition('kopaygorodsky_notification.websocket_server');
+            $serverDefinition->setArgument(0, $serverConfig['port']);
+
+            if (true === $serverConfig['auth']) {
+                $serverDefinition->setArgument(1, new Reference('kopaygorodsky_notification.websockets.auth_provider'));
             }
         }
     }
@@ -159,6 +156,6 @@ final class KopayNotificationExtension extends Extension
      */
     public function isBundleEnabled(string $bundle, ContainerBuilder $container): bool
     {
-        return false === array_key_exists($bundle, array_flip($container->getParameter('kernel.bundles')));
+        return array_key_exists($bundle, array_flip($container->getParameter('kernel.bundles')));
     }
 }
