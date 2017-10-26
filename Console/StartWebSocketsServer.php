@@ -44,7 +44,7 @@ class StartWebSocketsServer extends Command
             )
         ), $this->port);
 
-        $output->writeln('<info>[OK] Server listening on localhost:8080 </info>');
+        $output->writeln(sprintf('<info>[OK] Server listening on ws://localhost:%s </info>', $this->port));
         $server->run();
     }
 }
