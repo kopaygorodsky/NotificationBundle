@@ -4,7 +4,7 @@ namespace Kopay\NotificationBundle\Provider\ReceiverIdentity;
 
 class EmailReceiverIdentity implements ReceiverIdentityInterface
 {
-    public function getIdentity($receiver)
+    public function getIdentity($receiver): string
     {
         return $receiver->getEmail();
     }

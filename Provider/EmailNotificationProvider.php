@@ -28,10 +28,12 @@ class EmailNotificationProvider implements NotificationProviderInterface
     {
 
         $receivers = $this->identity->getIdentities(
-            $notification->getRecipientsItems()->map(
+            array_map(
                 function ($recipientItem) {
                     return $recipientItem->getRecipient();
-                })->toArray()
+                },
+                (array)$notification->getRecipientsItems()
+            )
         );
 
         $message = (new \Swift_Message($notification->getTitle()))

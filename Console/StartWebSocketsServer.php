@@ -23,8 +23,8 @@ class StartWebSocketsServer extends Command
     public function configure()
     {
         $this
-            ->setName('notification:server:start')
-            ->setDescription('Start the notification server.');
+            ->setName('notification:server:run')
+            ->setDescription('Run the notification server.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)

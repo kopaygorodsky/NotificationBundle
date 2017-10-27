@@ -30,10 +30,12 @@ class PushNotificationProvider implements NotificationProviderInterface
         Client\connect('ws://localhost:'.$this->port)->then(function($conn) use ($notification) {
 
             $receivers = $this->identity->getIdentities(
-                $notification->getRecipientsItems()->map(
+                array_map(
                     function ($recipientItem) {
                         return $recipientItem->getRecipient();
-                })->toArray()
+                    },
+                    (array)$notification->getRecipientsItems()
+                )
             );
 
             foreach ($receivers as $receiver) {
