@@ -5,7 +5,9 @@ namespace Kopay\NotificationBundle\DependencyInjection;
 use JMS\JobQueueBundle\JMSJobQueueBundle;
 use Kopay\NotificationBundle\Console\NotificationCommandInterface;
 use Kopay\NotificationBundle\Job\JmsJobBundleProvider;
+use Kopay\NotificationBundle\Server\Security\AuthenticatorInterface;
 use Kopay\NotificationBundle\Server\Security\JwtAuthProvider;
+use Kopay\NotificationBundle\Server\ServerStackInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -80,7 +82,7 @@ final class KopayNotificationExtension extends Extension
             if (!$this->isBundleEnabled('JMS\JobQueueBundle\JMSJobQueueBundle', $container)) {
                 throw new \LogicException(
                     sprintf(
-                        'Cannot register "%s" without "%s registered".',
+                        'Cannot register "%s" without "%s" registered',
                         JmsJobBundleProvider::class,
                         JMSJobQueueBundle::class
                     )
@@ -111,35 +113,52 @@ final class KopayNotificationExtension extends Extension
                 if (!$this->isBundleEnabled('Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle', $container)) {
                     throw new \LogicException(
                         sprintf(
-                            'Cannot register "%s" without "%s" registered.',
+                            'Cannot register "%s" without "%s" registered',
                             JwtAuthProvider::class,
                             'Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle'
                         )
                     );
                 }
+
+                $authProviderDefinition = $container->getDefinition('kopaygorodsky_notification.websockets.auth_provider');
+
+                if (!array_key_exists(AuthenticatorInterface::class, class_implements($authProviderDefinition->getClass()))) {
+                    throw new \LogicException(sprintf('Authenticator service %s must implement %s', $authProviderDefinition->getClass(), AuthenticatorInterface::class));
+                }
+
             } else {
                 $container->removeDefinition('kopaygorodsky_notification.websockets.auth_provider');
             }
 
             if (false === $serverConfig['default']) {
-                $container->removeDefinition('kopaygorodsky_notification.websocket_server');
+                $container->removeDefinition('kopaygorodsky_notification.notification_server');
                 $container->removeDefinition('kopaygorodsky_notification.console.start_server');
+                $container->removeDefinition('kopaygorodsky_notification.server_stack');
                 return;
             }
 
-            $serverDefinition = $container->getDefinition('kopaygorodsky_notification.websocket_server');
+            $serverDefinition = $container->getDefinition('kopaygorodsky_notification.notification_server');
 
             if (true === $serverConfig['auth']) {
                 $serverDefinition->setArgument(0, new Reference('kopaygorodsky_notification.websockets.auth_provider'));
             }
 
+            $serverStackDefinition = $container->getDefinition('kopaygorodsky_notification.server_stack');
+
+            if (!array_key_exists(ServerStackInterface::class, class_implements($serverStackDefinition->getClass()))) {
+                throw new \LogicException(sprintf('Server stack service %s must implement %s', $serverStackDefinition->getClass(), ServerStackInterface::class));
+            }
+
+            $serverStackDefinition->addArgument($serverConfig['port']);
+
+
             $startServerDefinition = $container->getDefinition('kopaygorodsky_notification.console.start_server');
-            $startServerDefinition->setArgument(0, $serverConfig['port']);
-            $startServerDefinition->setArgument(1, new Reference('kopaygorodsky_notification.websocket_server'));
+
+            $startServerDefinition->setArgument(0, new Reference('kopaygorodsky_notification.server_stack'));
 
             if ($container->hasDefinition('kopaygorodsky_notification.sending_provider.push')) {
                 $container->getDefinition('kopaygorodsky_notification.sending_provider.push')
-                    ->setArgument(0, $serverConfig['port']);
+                    ->addArgument($serverConfig['port']);
             }
         }
     }

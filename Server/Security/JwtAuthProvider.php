@@ -8,7 +8,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthen
 use Ratchet\ConnectionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class JwtAuthProvider implements AuthProviderInterface
+class JwtAuthProvider implements AuthenticatorInterface
 {
     protected $authenticator;
 

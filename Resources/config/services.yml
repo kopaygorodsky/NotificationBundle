@@ -11,14 +11,21 @@ services:
 
     kopaygorodsky_notification.sending_provider.email:
         class: Kopay\NotificationBundle\Provider\EmailNotificationProvider
-        arguments: ['@mailer']
+        arguments: ['@mailer', '@kopaygorodsky_notification.receiver_identity.email']
         tags:
             - {name: kopaygorodsky_notifications.sending_provider, type: email}
 
     kopaygorodsky_notification.sending_provider.push:
         class: Kopay\NotificationBundle\Provider\PushNotificationProvider
+        arguments: ['@kopaygorodsky_notification.receiver_identity.id']
         tags:
             - {name: kopaygorodsky_notifications.sending_provider, type: push}
+
+    kopaygorodsky_notification.receiver_identity.email:
+        class: Kopay\NotificationBundle\Provider\ReceiverIdentity\EmailReceiverIdentity
+
+    kopaygorodsky_notification.receiver_identity.id:
+        class: Kopay\NotificationBundle\Provider\ReceiverIdentity\IdReceiverIdentity
 
     kopaygorodsky_notification.job_provider:
         class: Kopay\NotificationBundle\Job\JmsJobBundleProvider
@@ -36,8 +43,15 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
-    kopaygorodsky_notification.websocket_server:
-        class: Kopay\NotificationBundle\Server\Notification
+    kopaygorodsky_notification.notification_server:
+        class: Kopay\NotificationBundle\Server\NotificationServer
+        #auth service will be injected in DP extension
+
+
+    kopaygorodsky_notification.server_stack:
+        lazy: true
+        class: Kopay\NotificationBundle\Server\RatchetStack
+        arguments: ['@kopaygorodsky_notification.notification_server']
 
     kopaygorodsky_notification.console.start_server:
         class: Kopay\NotificationBundle\Console\StartWebSocketsServer

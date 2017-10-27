@@ -2,20 +2,20 @@
 
 namespace Kopay\NotificationBundle\Server;
 
-use Kopay\NotificationBundle\Server\Security\AuthProviderInterface;
+use Kopay\NotificationBundle\Server\Security\AuthenticatorInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
-class Notification implements MessageComponentInterface
+class NotificationServer implements MessageComponentInterface
 {
     protected $connections;
 
     /**
-     * @var AuthProviderInterface
+     * @var AuthenticatorInterface
      */
     protected $authProvider;
 
-    public function __construct(AuthProviderInterface $provider = null)
+    public function __construct(AuthenticatorInterface $provider = null)
     {
         $this->connections = [];
         $this->authProvider = $provider;

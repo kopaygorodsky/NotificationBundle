@@ -4,44 +4,45 @@ namespace Kopay\NotificationBundle\Provider;
 
 use Kopay\NotificationBundle\Entity\NotificationEmailInterface;
 use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
+use Kopay\NotificationBundle\Provider\ReceiverIdentity\ReceiverIdentityInterface;
 
-class EmailNotificationProvider extends AbstractNotificationProvider
+class EmailNotificationProvider implements NotificationProviderInterface
 {
     /**
      * @var \Swift_Mailer
      */
     protected $mailer;
 
-    public function __construct(\Swift_Mailer $mailer)
+    /**
+     * @var ReceiverIdentityInterface
+     */
+    protected $identity;
+
+    public function __construct(\Swift_Mailer $mailer, ReceiverIdentityInterface $identity)
     {
         $this->mailer = $mailer;
+        $this->identity = $identity;
     }
-
 
     public function send(NotificationMessageInterface $notification): void
     {
+
+        $receivers = $this->identity->getIdentities(
+            $notification->getRecipientsItems()->map(
+                function ($recipientItem) {
+                    return $recipientItem->getRecipient();
+                })->toArray()
+        );
+
         $message = (new \Swift_Message($notification->getTitle()))
             ->setFrom($notification->getFromEmail())
-            ->setTo($this->getReceiversIdentity($notification))
+            ->setTo($receivers)
             ->setBody(
                 $notification->getMessage(),
                 'text/html'
             )
         ;
         $this->mailer->send($message);
-    }
-
-    /**
-     * Return array of emails
-     *
-     * @param NotificationMessageInterface $notification
-     * @return array
-     */
-    protected function getReceiversIdentity(NotificationMessageInterface $notification): array
-    {
-        return $notification->getRecipientsItems()->map(function ($recipientItem) {
-            return $recipientItem->getRecipient()->getEmail()();
-        })->toArray();
     }
 
     public function supports(NotificationMessageInterface $notification): bool

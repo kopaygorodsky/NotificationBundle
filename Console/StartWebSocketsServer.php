@@ -2,10 +2,7 @@
 
 namespace Kopay\NotificationBundle\Console;
 
-use Kopay\NotificationBundle\Server\Notification;
-use Ratchet\Http\HttpServer;
-use Ratchet\Server\IoServer;
-use Ratchet\WebSocket\WsServer;
+use Kopay\NotificationBundle\Server\ServerStackInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,20 +10,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class StartWebSocketsServer extends Command
 {
     /**
-     * @var Notification
+     * @var ServerStackInterface
      */
-    protected $server;
+    protected $serverStack;
 
-    /**
-     * @var int
-     */
-    protected $port;
-
-    public function __construct(int $port, Notification $server)
+    public function __construct(ServerStackInterface $serverStack)
     {
         parent::__construct();
-        $this->port = $port;
-        $this->server = $server;
+        $this->serverStack = $serverStack;
     }
 
     public function configure()
@@ -38,13 +29,7 @@ class StartWebSocketsServer extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $server = IoServer::factory(new HttpServer(
-            new WsServer(
-                $this->server
-            )
-        ), $this->port);
-
-        $output->writeln(sprintf('<info>[OK] Server listening on ws://localhost:%s </info>', $this->port));
-        $server->run();
+        $output->writeln(sprintf('<info>[OK] Server listening on ws://%s:%s </info>', $this->serverStack->getHost(), $this->serverStack->getPort()));
+        $this->serverStack->run();
     }
 }
