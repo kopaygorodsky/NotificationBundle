@@ -4,26 +4,41 @@ namespace Kopay\NotificationBundle\Provider;
 
 use Kopay\NotificationBundle\Entity\NotificationEmailInterface;
 use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Kopay\NotificationBundle\Provider\ReceiverIdentity\ReceiverIdentityInterface;
 
-class EmailNotificationProvider extends AbstractEmailNotificationProvider
+class EmailNotificationProvider implements NotificationProviderInterface
 {
     /**
      * @var \Swift_Mailer
      */
     protected $mailer;
 
-    public function __construct(\Swift_Mailer $mailer)
+    /**
+     * @var ReceiverIdentityInterface
+     */
+    protected $identity;
+
+    public function __construct(\Swift_Mailer $mailer, ReceiverIdentityInterface $identity)
     {
         $this->mailer = $mailer;
+        $this->identity = $identity;
     }
-
 
     public function send(NotificationMessageInterface $notification): void
     {
+
+        $receivers = $this->identity->getIdentities(
+            array_map(
+                function ($recipientItem) {
+                    return $recipientItem->getRecipient();
+                },
+                (array)$notification->getRecipientsItems()
+            )
+        );
+
         $message = (new \Swift_Message($notification->getTitle()))
             ->setFrom($notification->getFromEmail())
-            ->setTo($this->getReceiversEmails($notification))
+            ->setTo($receivers)
             ->setBody(
                 $notification->getMessage(),
                 'text/html'
@@ -32,14 +47,8 @@ class EmailNotificationProvider extends AbstractEmailNotificationProvider
         $this->mailer->send($message);
     }
 
-    /**
-     * @param NotificationEmailInterface $notification
-     * @return array
-     */
-    protected function getReceiversEmails(NotificationEmailInterface $notification): array
+    public function supports(NotificationMessageInterface $notification): bool
     {
-        return $notification->getRecipientsItems()->map(function ($recipientItem) {
-            return $recipientItem->getRecipient()->getEmail()();
-        })->toArray();
+        return $notification instanceof NotificationEmailInterface;
     }
 }
