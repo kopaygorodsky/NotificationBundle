@@ -4,7 +4,8 @@
 
   use Doctrine\Common\Collections\Collection;
 
-  interface NotificationMessageInterface {
+  interface NotificationMessageInterface
+  {
     public function getId();
 
     /**
@@ -29,7 +30,7 @@
      *
      * @return null|string
      */
-    public function getTitle(): ? string;
+    public function getTitle(): ?string;
 
     /**
      * @param null|string $title
