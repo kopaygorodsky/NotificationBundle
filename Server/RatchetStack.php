@@ -21,18 +21,24 @@ class RatchetStack implements ServerStackInterface
     protected $server;
 
     /**
+     * @var string
+     */
+    protected $host;
+
+    /**
      * @var int
      */
     private $port;
 
-    public function __construct(NotificationServer $notificationServer, int $port)
+    public function __construct(NotificationServer $notificationServer, string $host, int $port)
     {
+        $this->host   = $host;
         $this->port   = $port;
         $this->server = IoServer::factory(new HttpServer(
             new WsServer(
                 $notificationServer
             )
-        ), $port);
+        ), $port, $host);
     }
 
     public function run(): void

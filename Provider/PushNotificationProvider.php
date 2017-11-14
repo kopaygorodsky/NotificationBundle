@@ -22,19 +22,25 @@ class PushNotificationProvider implements NotificationProviderInterface
     protected $port;
 
     /**
+     * @var string
+     */
+    protected $host;
+
+    /**
      * @var ReceiverIdentityInterface
      */
     protected $identity;
 
-    public function __construct(ReceiverIdentityInterface $identity, int $port)
+    public function __construct(ReceiverIdentityInterface $identity, string $host, int $port)
     {
+        $this->host     = $host;
         $this->port     = $port;
         $this->identity = $identity;
     }
 
     public function send(NotificationMessageInterface $notification): void
     {
-        Client\connect('ws://localhost:'.$this->port)->then(function ($conn) use ($notification) {
+        Client\connect(sprintf('ws://%s:%d', $this->host, $this->port))->then(function ($conn) use ($notification) {
             $receivers = $this->identity->getIdentities(
                 array_map(
                     function ($recipientItem) {

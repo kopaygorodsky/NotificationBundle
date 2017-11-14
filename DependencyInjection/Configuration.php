@@ -51,6 +51,8 @@ class Configuration implements ConfigurationInterface
                                     ->booleanNode('default')
                                         ->defaultTrue()
                                     ->end()
+                                    ->scalarNode('host')
+                                        ->defaultValue('0.0.0.0')
                                     ->scalarNode('port')
                                         ->defaultValue(8080)
                                     ->end()

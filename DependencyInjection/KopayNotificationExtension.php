@@ -154,6 +154,7 @@ final class KopayNotificationExtension extends Extension
                 throw new \LogicException(sprintf('Server stack service %s must implement %s', $serverStackDefinition->getClass(), ServerStackInterface::class));
             }
 
+            $serverStackDefinition->addArgument($serverConfig['host']);
             $serverStackDefinition->addArgument($serverConfig['port']);
 
             $startServerDefinition = $container->getDefinition('kopay_notify.console.start_server');
@@ -162,6 +163,7 @@ final class KopayNotificationExtension extends Extension
 
             if ($container->hasDefinition('kopay_notify.sending_provider.push')) {
                 $container->getDefinition('kopay_notify.sending_provider.push')
+                    ->addArgument($serverConfig['host'])
                     ->addArgument($serverConfig['port']);
             }
         }
