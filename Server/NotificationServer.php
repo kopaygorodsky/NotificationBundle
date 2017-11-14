@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\Server;
 
 use Kopay\NotificationBundle\Server\Security\AuthenticatorInterface;
@@ -17,12 +24,12 @@ class NotificationServer implements MessageComponentInterface
 
     public function __construct(AuthenticatorInterface $provider = null)
     {
-        $this->connections = [];
+        $this->connections  = [];
         $this->authProvider = $provider;
     }
 
     /**
-     * A new websocket connection
+     * A new websocket connection.
      *
      * @param ConnectionInterface $conn
      */
@@ -30,20 +37,21 @@ class NotificationServer implements MessageComponentInterface
     {
         $conn->send('You are connected from: '.$conn->remoteAddress);
 
-        if ($conn->remoteAddress === '127.0.0.1') {
-            $conn->uniqueId = uniqid('internal_', true);
+        if ('127.0.0.1' === $conn->remoteAddress) {
+            $conn->uniqueId                     = uniqid('internal_', true);
             $this->connections[$conn->uniqueId] = $conn;
-        } else if ($this->authProvider) {
+        } elseif ($this->authProvider) {
             //if auth is enabled
             if (null === $authToken = $this->authProvider->authenticate($conn)) {
                 $conn->close(403);
+
                 return;
             }
-            $user = $authToken->getUser();
-            $conn->uniqueId = $user->getId();
+            $user                              = $authToken->getUser();
+            $conn->uniqueId                    = $user->getId();
             $this->connections[$user->getId()] = $conn;
         } else {
-            $conn->uniqueId = uniqid('conn_', true);
+            $conn->uniqueId                     = uniqid('conn_', true);
             $this->connections[$conn->uniqueId] = $conn;
         }
 
@@ -51,16 +59,17 @@ class NotificationServer implements MessageComponentInterface
     }
 
     /**
-     * Handle message sending
+     * Handle message sending.
      *
      * @param ConnectionInterface $from
-     * @param string $msg
+     * @param string              $msg
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
         //allowed only for internal connections
         if (false === strpos($from->uniqueId, 'internal_')) {
             $from->send('You are not allowed to send messages');
+
             return;
         }
 
@@ -72,7 +81,8 @@ class NotificationServer implements MessageComponentInterface
     }
 
     /**
-     * A connection is closed
+     * A connection is closed.
+     *
      * @param ConnectionInterface $conn
      */
     public function onClose(ConnectionInterface $conn)
@@ -83,14 +93,14 @@ class NotificationServer implements MessageComponentInterface
     }
 
     /**
-     * Error handling
+     * Error handling.
      *
      * @param ConnectionInterface $conn
-     * @param \Exception $e
+     * @param \Exception          $e
      */
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
-        $conn->send('Error : ' . $e->getMessage());
+        $conn->send('Error : '.$e->getMessage());
         $conn->close();
     }
 }

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -9,7 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class Notification implements NotificationMessageInterface
 {
-
     /**
      * @var string
      */
@@ -41,9 +47,9 @@ abstract class Notification implements NotificationMessageInterface
 
     public function __construct()
     {
-        $this->id = Uuid::uuid4()->toString();
+        $this->id              = Uuid::uuid4()->toString();
         $this->recipientsItems = new ArrayCollection();
-        $this->createdAt = new \DateTime();
+        $this->createdAt       = new \DateTime();
     }
 
     /**

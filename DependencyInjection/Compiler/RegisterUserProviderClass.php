@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\DependencyInjection\Compiler;
 
 use Kopay\NotificationBundle\DependencyInjection\KopayNotificationExtension;
@@ -17,6 +24,7 @@ final class RegisterUserProviderClass implements CompilerPassInterface
             if (false === $bundleConfig[0]['recipientClass']) {
                 $container->removeDefinition(KopayNotificationExtension::METADATA_LISTENER);
             }
+
             return;
         }
 
@@ -24,13 +32,14 @@ final class RegisterUserProviderClass implements CompilerPassInterface
 
         if (isset($securityConfig[0]['providers']) && !empty($providers = $securityConfig[0]['providers'])) {
             reset($providers);
-            $defaultProvider = $providers[key($providers)];
+            $defaultProvider     = $providers[key($providers)];
             $defaultProviderType = key($defaultProvider);
 
             if ('entity' === $defaultProviderType) {
-                $userClass = $defaultProvider[$defaultProviderType]['class'];
+                $userClass        = $defaultProvider[$defaultProviderType]['class'];
                 $metadataListener = $container->getDefinition(KopayNotificationExtension::METADATA_LISTENER);
                 $metadataListener->addArgument($userClass);
+
                 return;
             }
         }

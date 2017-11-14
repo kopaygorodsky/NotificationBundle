@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -20,13 +27,14 @@ final class RegisterTagServicesPass implements CompilerPassInterface
 
     /**
      * RegisterTagServicesPass constructor.
+     *
      * @param string $registry
      * @param string $tagName
      */
     public function __construct(string $registry, string $tagName)
     {
         $this->registry = $registry;
-        $this->tagName = $tagName;
+        $this->tagName  = $tagName;
     }
 
     /**
@@ -38,7 +46,7 @@ final class RegisterTagServicesPass implements CompilerPassInterface
             return;
         }
 
-        $registry = $container->findDefinition($this->registry);
+        $registry       = $container->findDefinition($this->registry);
         $taggedServices = $this->findReferences($container, $this->tagName);
         $registry->addArgument($taggedServices);
     }

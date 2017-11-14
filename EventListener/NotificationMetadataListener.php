@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\EventListener;
 
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
@@ -32,12 +39,12 @@ class NotificationMetadataListener
         ;
 
         $classMetadata->mapManyToOne([
-            'fieldName' => 'recipient',
+            'fieldName'    => 'recipient',
             'targetEntity' => $this->userClass,
-            'joinColumn' => [
+            'joinColumn'   => [
                 'name'                  => 'recipient_id',
                 'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-            ]
+            ],
         ]);
     }
 }

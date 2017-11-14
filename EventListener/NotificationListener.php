@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -31,14 +38,12 @@ class NotificationListener
      */
     private $validator;
 
-
     public function __construct(ObjectManager $manager, EventDispatcherInterface $dispatcher, JobProviderInterface $jobProvider, ValidatorInterface $validator)
     {
         $this->objectManager = $manager;
-        $this->dispatcher = $dispatcher;
-        $this->jobProvider = $jobProvider;
-        $this->validator = $validator;
-
+        $this->dispatcher    = $dispatcher;
+        $this->jobProvider   = $jobProvider;
+        $this->validator     = $validator;
     }
 
     public function onNotificationCreated(NotificationEventInterface $event): void

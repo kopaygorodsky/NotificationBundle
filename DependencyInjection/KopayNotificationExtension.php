@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\DependencyInjection;
 
 use JMS\JobQueueBundle\JMSJobQueueBundle;
@@ -8,10 +15,8 @@ use Kopay\NotificationBundle\Job\JmsJobBundleProvider;
 use Kopay\NotificationBundle\Server\Security\AuthenticatorInterface;
 use Kopay\NotificationBundle\Server\Security\JwtAuthProvider;
 use Kopay\NotificationBundle\Server\ServerStackInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -19,7 +24,7 @@ use Symfony\Component\DependencyInjection\Loader;
 /**
  * This is the class that loads and manages your bundle configuration.
  *
- * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
+ * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
 final class KopayNotificationExtension extends Extension
 {
@@ -31,7 +36,7 @@ final class KopayNotificationExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config        = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -55,20 +60,20 @@ final class KopayNotificationExtension extends Extension
         }
 
         $taggedServices = $container->findTaggedServiceIds('kopay_notify.sending_provider');
-        $providers = ['email' => 0, 'push' => 0];
+        $providers      = ['email' => 0, 'push' => 0];
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
                 foreach ($attributes as $name => $value) {
-                    if ($name === 'type') {
-                        $providers[$value]++;
+                    if ('type' === $name) {
+                        ++$providers[$value];
                     }
                 }
             }
         }
 
         foreach ($providers as $type => $count) {
-            if ($count === 0) {
+            if (0 === $count) {
                 throw new \LogicException(sprintf('You must define at least one provider for \'%s\' notification type or enable default one', $type));
             }
         }
@@ -78,7 +83,7 @@ final class KopayNotificationExtension extends Extension
     {
         $registry = $container->findDefinition('kopay_notify.job_provider');
 
-        if ($registry->getClass() === JmsJobBundleProvider::class) {
+        if (JmsJobBundleProvider::class === $registry->getClass()) {
             if (!$this->isBundleEnabled('JMS\JobQueueBundle\JMSJobQueueBundle', $container)) {
                 throw new \LogicException(
                     sprintf(
@@ -125,7 +130,6 @@ final class KopayNotificationExtension extends Extension
                 if (!array_key_exists(AuthenticatorInterface::class, class_implements($authProviderDefinition->getClass()))) {
                     throw new \LogicException(sprintf('Authenticator service %s must implement %s', $authProviderDefinition->getClass(), AuthenticatorInterface::class));
                 }
-
             } else {
                 $container->removeDefinition('kopay_notify.websockets.auth_provider');
             }
@@ -134,6 +138,7 @@ final class KopayNotificationExtension extends Extension
                 $container->removeDefinition('kopay_notify.notification_server');
                 $container->removeDefinition('kopay_notify.console.start_server');
                 $container->removeDefinition('kopay_notify.server_stack');
+
                 return;
             }
 
@@ -150,7 +155,6 @@ final class KopayNotificationExtension extends Extension
             }
 
             $serverStackDefinition->addArgument($serverConfig['port']);
-
 
             $startServerDefinition = $container->getDefinition('kopay_notify.console.start_server');
 
@@ -177,8 +181,9 @@ final class KopayNotificationExtension extends Extension
     }
 
     /**
-     * @param string $bundle
+     * @param string           $bundle
      * @param ContainerBuilder $container
+     *
      * @return bool
      */
     public function isBundleEnabled(string $bundle, ContainerBuilder $container): bool

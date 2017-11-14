@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\Console;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -33,11 +40,11 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
      */
     protected $objectManager;
 
-    public function __construct(ObjectManager $manager,  EventDispatcherInterface $dispatcher, array $sendingProviders)
+    public function __construct(ObjectManager $manager, EventDispatcherInterface $dispatcher, array $sendingProviders)
     {
         parent::__construct();
-        $this->objectManager = $manager;
-        $this->eventDispatcher = $dispatcher;
+        $this->objectManager    = $manager;
+        $this->eventDispatcher  = $dispatcher;
         $this->sendingProviders = (function (NotificationProviderInterface ...$providers) {
             return $providers;
         })(...$sendingProviders);
@@ -56,7 +63,7 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $notification = $this->getNotification($notificationId = $input->getArgument('notification'));
-        $event = new NotificationEvent($notification);
+        $event        = new NotificationEvent($notification);
 
         $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_PRE_SEND, $event);
 
@@ -72,13 +79,16 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
             $output->writeln(sprintf('<info>Notification %s has been sent</info>', $notificationId));
         } catch (\Exception $exception) {
             $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_FAILED, new NotificationEventFailed($notification, $exception));
+
             throw $exception;
         }
     }
 
     /**
      * @param $id
+     *
      * @return NotificationMessageInterface
+     *
      * @throws EntityNotFoundException
      */
     public function getNotification($id): NotificationMessageInterface
