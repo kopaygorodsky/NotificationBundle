@@ -1,63 +1,63 @@
 services:
-    kopay_notify.listener:
+    kopay_notification.listener:
         class: Kopay\NotificationBundle\EventListener\NotificationListener
         arguments:
              - '@doctrine.orm.entity_manager'
              - '@event_dispatcher'
-             - '@kopay_notify.job_provider'
+             - '@kopay_notification.job_provider'
              - '@validator'
         tags:
             - { name: kernel.event_listener, event: kopaygorodsky.notification.message.created, method: onNotificationCreated }
 
-    kopay_notify.sending_provider.email:
+    kopay_notification.sending_provider.email:
         class: Kopay\NotificationBundle\Provider\EmailNotificationProvider
-        arguments: ['@mailer', '@kopay_notify.receiver_identity.email']
+        arguments: ['@mailer', '@kopay_notification.receiver_identity.email']
         tags:
-            - {name: kopay_notify.sending_provider, type: email}
+            - {name: kopay_notification.sending_provider, type: email}
 
-    kopay_notify.sending_provider.push:
+    kopay_notification.sending_provider.push:
         class: Kopay\NotificationBundle\Provider\PushNotificationProvider
-        arguments: ['@kopay_notify.receiver_identity.id']
+        arguments: ['@kopay_notification.receiver_identity.id']
         tags:
-            - {name: kopay_notify.sending_provider, type: push}
+            - {name: kopay_notification.sending_provider, type: push}
 
-    kopay_notify.receiver_identity.email:
+    kopay_notification.receiver_identity.email:
         class: Kopay\NotificationBundle\Provider\ReceiverIdentity\EmailReceiverIdentity
 
-    kopay_notify.receiver_identity.id:
+    kopay_notification.receiver_identity.id:
         class: Kopay\NotificationBundle\Provider\ReceiverIdentity\IdReceiverIdentity
 
-    kopay_notify.job_provider:
+    kopay_notification.job_provider:
         class: Kopay\NotificationBundle\Job\JmsJobBundleProvider
         arguments: ['@doctrine.orm.entity_manager']
 
-    kopay_notify.console.send_notification:
+    kopay_notification.console.send_notification:
         class: Kopay\NotificationBundle\Console\SendNotificationCommand
         arguments: ['@doctrine.orm.entity_manager','@event_dispatcher']
         ## sending providers added in compiler pass
         tags:
             - { name: console.command }
 
-    kopay_notify.metadata_listener:
+    kopay_notification.metadata_listener:
         class: Kopay\NotificationBundle\EventListener\NotificationMetadataListener
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
-    kopay_notify.notification_server:
+    kopay_notification.notification_server:
         class: Kopay\NotificationBundle\Server\NotificationServer
         #auth service will be injected in DP extension
 
 
-    kopay_notify.server_stack:
+    kopay_notification.server_stack:
         lazy: true
         class: Kopay\NotificationBundle\Server\RatchetStack
-        arguments: ['@kopay_notify.notification_server']
+        arguments: ['@kopay_notification.notification_server']
 
-    kopay_notify.console.start_server:
+    kopay_notification.console.start_server:
         class: Kopay\NotificationBundle\Console\StartWebSocketsServer
         tags:
             - { name: console.command }
 
-    kopay_notify.websockets.auth_provider:
+    kopay_notification.websockets.auth_provider:
         class: Kopay\NotificationBundle\Server\Security\JwtAuthProvider
         arguments: ['@lexik_jwt_authentication.security.authentication.provider']

@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('kopay_notify')->isRequired();
+        $rootNode    = $treeBuilder->root('kopay_notification')->isRequired();
 
         $rootNode
             ->children()
@@ -53,6 +53,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->scalarNode('host')
                                         ->defaultValue('0.0.0.0')
+                                    ->end()
                                     ->scalarNode('port')
                                         ->defaultValue(8080)
                                     ->end()
