@@ -65,7 +65,7 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
         $notification = $this->getNotification($notificationId = $input->getArgument('notification'));
         $event        = new NotificationEvent($notification);
 
-        $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_PRE_SEND, $event);
+        $this->eventDispatcher->dispatch(NotificationEventInterface::NOTIFICATION_PRE_SEND, $event);
 
         try {
             foreach ($this->sendingProviders as $provider) {
@@ -74,11 +74,11 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
                 }
             }
 
-            $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_POST_SEND, $event);
+            $this->eventDispatcher->dispatch(NotificationEventInterface::NOTIFICATION_POST_SEND, $event);
 
             $output->writeln(sprintf('<info>Notification %s has been sent</info>', $notificationId));
         } catch (\Exception $exception) {
-            $this->eventDispatcher->dispatch(NotificationEventInterface::JOB_FAILED, new NotificationEventFailed($notification, $exception));
+            $this->eventDispatcher->dispatch(NotificationEventInterface::NOTIFICATION_FAILED, new NotificationEventFailed($notification, $exception));
 
             throw $exception;
         }

@@ -48,9 +48,7 @@ class NotificationListener
 
     public function onNotificationCreated(NotificationEventInterface $event): void
     {
-        //write this notification to db, now we don't have any other options
         $notification = $event->getNotification();
-
         $errors = $this->validator->validate($notification);
 
         if ($errors->count() > 0) {
@@ -58,12 +56,8 @@ class NotificationListener
         }
 
         $this->objectManager->persist($notification);
-
-        $this->dispatcher->dispatch(NotificationEventInterface::NOTIFICATION_POST_PERSIST, $event);
-
-        // create a job to make notifications async.
+        // create a job to send notification.
         $this->jobProvider->createJob($notification);
-
-        $this->dispatcher->dispatch(NotificationEventInterface::JOB_CREATED, $event);
+        $this->dispatcher->dispatch(NotificationEventInterface::NOTIFICATION_JOB_CREATED, $event);
     }
 }
