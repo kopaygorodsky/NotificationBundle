@@ -47,7 +47,7 @@ abstract class Notification implements NotificationMessageInterface
 
     public function __construct()
     {
-        $this->id              = Uuid::uuid4()->toString();
+        $this->id              = Uuid::uuid4();
         $this->recipientsItems = new ArrayCollection();
         $this->createdAt       = new \DateTime();
     }
