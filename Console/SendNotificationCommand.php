@@ -21,17 +21,17 @@ class SendNotificationCommand extends Command implements NotificationCommandInte
     /**
      * @var array|NotificationProviderInterface[]
      */
-    private $sendingProviders;
+    protected $sendingProviders;
 
     /**
      * @var EventDispatcherInterface
      */
-    private $eventDispatcher;
+    protected $eventDispatcher;
 
     /**
      * @var ObjectManager
      */
-    private $objectManager;
+    protected $objectManager;
 
     public function __construct(ObjectManager $manager,  EventDispatcherInterface $dispatcher, array $sendingProviders)
     {

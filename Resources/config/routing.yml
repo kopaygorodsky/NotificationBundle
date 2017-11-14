@@ -1,3 +1,0 @@
-kopaygorodsky_notification_homepage:
-    path:     /notifications
-    defaults: { _controller: KopayNotificationBundle:Default:index }

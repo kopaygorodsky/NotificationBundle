@@ -6,7 +6,7 @@ use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 interface NotificationCommandInterface
 {
-    const SEND_NOTIFICATION = 'notifications:send';
+    const SEND_NOTIFICATION = 'notification:send';
 
     public function getNotification($id): NotificationMessageInterface;
 }
