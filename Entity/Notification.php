@@ -12,7 +12,6 @@ namespace Kopay\NotificationBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class Notification implements NotificationMessageInterface
 {
@@ -54,9 +53,7 @@ abstract class Notification implements NotificationMessageInterface
         }
 
         array_walk($recipients, function ($recipient) {
-            $item = new NotificationRecipient();
-            $item->setRecipient($recipient);
-            $this->recipientsItems->add($item);
+            $this->recipientsItems->add(new NotificationRecipient($this, $recipient));
         });
     }
 

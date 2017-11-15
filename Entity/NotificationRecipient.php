@@ -34,9 +34,19 @@ class NotificationRecipient implements NotificationRecipientInterface
      */
     protected $seen = false;
 
-    public function __construct()
+    public function __construct(NotificationMessageInterface $notification, $recipient)
     {
-        $this->id = Uuid::uuid4();
+        $this->id           = Uuid::uuid4();
+        $this->notification = $notification;
+        $this->recipient    = $recipient;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     /**
@@ -48,27 +58,11 @@ class NotificationRecipient implements NotificationRecipientInterface
     }
 
     /**
-     * @param NotificationMessageInterface $notification
-     */
-    public function setNotification(NotificationMessageInterface $notification): void
-    {
-        $this->notification = $notification;
-    }
-
-    /**
      * @return UserInterface
      */
     public function getRecipient(): UserInterface
     {
         return $this->recipient;
-    }
-
-    /**
-     * @param mixed $recipient
-     */
-    public function setRecipient(UserInterface $recipient): void
-    {
-        $this->recipient = $recipient;
     }
 
     /**
@@ -85,13 +79,5 @@ class NotificationRecipient implements NotificationRecipientInterface
     public function setSeen(bool $seen): void
     {
         $this->seen = $seen;
-    }
-
-    /**
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
     }
 }
