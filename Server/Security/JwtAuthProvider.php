@@ -10,18 +10,28 @@
 namespace Kopay\NotificationBundle\Server\Security;
 
 use function GuzzleHttp\Psr7\parse_query;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Provider\JWTProvider;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Ratchet\ConnectionInterface;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JwtAuthProvider implements AuthenticatorInterface
 {
-    protected $authenticator;
+    /**
+     * @var AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
-    public function __construct(JWTProvider $authenticator)
+    /**
+     * @var JWTTokenManagerInterface
+     */
+    protected $jwtManager;
+
+    public function __construct(AuthenticationManagerInterface $authenticationManager, JWTTokenManagerInterface $jwtManager)
     {
-        $this->authenticator = $authenticator;
+        $this->authenticationManager = $authenticationManager;
+        $this->jwtManager = $jwtManager;
     }
 
     public function authenticate(ConnectionInterface $connection): ? TokenInterface
@@ -32,6 +42,6 @@ class JwtAuthProvider implements AuthenticatorInterface
             return null;
         }
 
-        return $this->authenticator->authenticate(new PreAuthenticationJWTUserToken($params['token']));
+        return $this->authenticationManager->authenticate(new PreAuthenticationJWTUserToken($params['token']));
     }
 }

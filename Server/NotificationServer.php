@@ -55,7 +55,7 @@ class NotificationServer implements MessageComponentInterface
             $this->connections[$conn->uniqueId] = $conn;
         }
 
-        $conn->send('..:: Hello from the Notification Center ::..');
+        $conn->send(json_encode(['connection_id' => $conn->uniqueId, 'message' => '..:: Hello from the Notification Center ::..']));
     }
 
     /**
