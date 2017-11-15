@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class NotificationRecipient implements NotificationRecipientInterface
 {
     /**
-     * @var string
+     * @var Uuid
      */
     protected $id;
 
@@ -44,7 +44,7 @@ class NotificationRecipient implements NotificationRecipientInterface
     /**
      * @return string
      */
-    public function getId(): string
+    public function getId(): Uuid
     {
         return $this->id;
     }
