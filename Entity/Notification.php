@@ -16,7 +16,7 @@ use Ramsey\Uuid\Uuid;
 abstract class Notification implements NotificationMessageInterface
 {
     /**
-     * @var string
+     * @var Uuid
      */
     protected $id;
 
@@ -58,9 +58,9 @@ abstract class Notification implements NotificationMessageInterface
     }
 
     /**
-     * @return string
+     * @return Uuid
      */
-    public function getId(): string
+    public function getId(): Uuid
     {
         return $this->id;
     }
