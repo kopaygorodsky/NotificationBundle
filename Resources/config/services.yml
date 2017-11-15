@@ -7,7 +7,7 @@ services:
              - '@kopay_notification.job_provider'
              - '@validator'
         tags:
-            - { name: kernel.event_listener, event: kopaygorodsky.notification.message.created, method: onNotificationCreated }
+            - { name: kernel.event_listener, event: kopay_notification.notification.post_created, method: onNotificationCreated }
 
     kopay_notification.sending_provider.email:
         class: Kopay\NotificationBundle\Provider\EmailNotificationProvider
