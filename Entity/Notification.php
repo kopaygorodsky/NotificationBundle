@@ -50,8 +50,8 @@ abstract class Notification implements NotificationMessageInterface
         $this->id              = Uuid::uuid4();
         $this->recipientsItems = new ArrayCollection();
         $this->createdAt       = new \DateTime();
-        $this->setTitle($title);
-        $this->setMessage($message);
+        $this->title = $title;
+        $this->message = $message;
         array_walk($recipients, function ($recipient) {$this->addRecipient($recipient);});
     }
 
