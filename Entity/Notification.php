@@ -45,11 +45,14 @@ abstract class Notification implements NotificationMessageInterface
      */
     protected $createdAt;
 
-    public function __construct()
+    public function __construct(string $title, string $message, array $recipients)
     {
         $this->id              = Uuid::uuid4();
         $this->recipientsItems = new ArrayCollection();
         $this->createdAt       = new \DateTime();
+        $this->setTitle($title);
+        $this->setMessage($message);
+        array_walk($recipients, function ($recipient) {$this->addRecipient($recipient);});
     }
 
     /**
