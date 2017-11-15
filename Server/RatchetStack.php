@@ -55,7 +55,7 @@ class RatchetStack implements ServerStackInterface
 
     public function getHost(): string
     {
-        return '0.0.0.0'; //default host
+        return $this->host;
     }
 
     public function getPort(): int
