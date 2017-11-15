@@ -42,7 +42,7 @@ class NotificationRecipient implements NotificationRecipientInterface
     }
 
     /**
-     * @return string
+     * @return Uuid
      */
     public function getId(): Uuid
     {
