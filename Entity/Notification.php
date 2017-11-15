@@ -53,7 +53,9 @@ abstract class Notification implements NotificationMessageInterface
         $this->title           = $title;
         $this->message         = $message;
         array_walk($recipients, function ($recipient) {
-            $this->addRecipient($recipient);
+            $item = new NotificationRecipient();
+            $item->setRecipient($recipient);
+            $this->recipientsItems->add($item);
         });
     }
 
@@ -71,14 +73,6 @@ abstract class Notification implements NotificationMessageInterface
     public function getRecipientsItems(): Collection
     {
         return $this->recipientsItems;
-    }
-
-    /**
-     * @param NotificationRecipientInterface $notificationRecipient
-     */
-    public function removeRecipientItem(NotificationRecipientInterface $notificationRecipient): void
-    {
-        $this->recipientsItems->removeElement($notificationRecipient);
     }
 
     /**
@@ -103,15 +97,5 @@ abstract class Notification implements NotificationMessageInterface
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
-    }
-
-    /**
-     * @param $recipient
-     */
-    public function addRecipient($recipient): void
-    {
-        $item = new NotificationRecipient();
-        $item->setRecipient($recipient);
-        $this->recipientsItems->add($item);
     }
 }
