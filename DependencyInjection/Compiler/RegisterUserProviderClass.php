@@ -62,6 +62,5 @@ final class RegisterUserProviderClass implements CompilerPassInterface
                     ->setArgument(0, $userProvider);
             }
         }
-        $container->removeDefinition(KopayNotificationExtension::METADATA_LISTENER);
     }
 }
