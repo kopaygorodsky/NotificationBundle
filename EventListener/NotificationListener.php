@@ -10,6 +10,7 @@
 namespace Kopay\NotificationBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Kopay\NotificationBundle\Event\Events;
 use Kopay\NotificationBundle\Event\NotificationEventInterface;
 use Kopay\NotificationBundle\Job\JobProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -58,6 +59,6 @@ class NotificationListener
         $this->objectManager->persist($notification);
         // create a job to send notification.
         $this->jobProvider->createJob($notification);
-        $this->dispatcher->dispatch(NotificationEventInterface::NOTIFICATION_JOB_CREATED, $event);
+        $this->dispatcher->dispatch(Events::NOTIFICATION_JOB_CREATED, $event);
     }
 }
