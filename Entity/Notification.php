@@ -76,14 +76,6 @@ abstract class Notification implements NotificationMessageInterface
     /**
      * @param NotificationRecipientInterface $notificationRecipient
      */
-    public function addRecipientItem(NotificationRecipientInterface $notificationRecipient): void
-    {
-        $this->recipientsItems->add($notificationRecipient);
-    }
-
-    /**
-     * @param NotificationRecipientInterface $notificationRecipient
-     */
     public function removeRecipientItem(NotificationRecipientInterface $notificationRecipient): void
     {
         $this->recipientsItems->removeElement($notificationRecipient);
@@ -98,27 +90,11 @@ abstract class Notification implements NotificationMessageInterface
     }
 
     /**
-     * @param string $message
-     */
-    public function setMessage(? string $message): void
-    {
-        $this->message = $message;
-    }
-
-    /**
      * @return string
      */
     public function getTitle(): ? string
     {
         return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle(? string $title): void
-    {
-        $this->title = $title;
     }
 
     /**
@@ -136,6 +112,6 @@ abstract class Notification implements NotificationMessageInterface
     {
         $item = new NotificationRecipient();
         $item->setRecipient($recipient);
-        $this->addRecipientItem($item);
+        $this->recipientsItems->add($item);
     }
 }

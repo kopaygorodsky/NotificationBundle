@@ -32,12 +32,4 @@ class NotificationEmail extends Notification implements NotificationEmailInterfa
     {
         return $this->fromEmail;
     }
-
-    /**
-     * @param string $from
-     */
-    public function setFromEmail(string $from): void
-    {
-        $this->fromEmail = $from;
-    }
 }

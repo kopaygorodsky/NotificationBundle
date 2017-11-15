@@ -29,12 +29,4 @@ class NotificationPush extends Notification
     {
         return $this->value;
     }
-
-    /**
-     * @param array $value
-     */
-    public function setValue(array $value)
-    {
-        $this->value = $value;
-    }
 }
