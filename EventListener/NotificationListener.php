@@ -49,7 +49,7 @@ class NotificationListener
     public function onNotificationCreated(NotificationEventInterface $event): void
     {
         $notification = $event->getNotification();
-        $errors = $this->validator->validate($notification);
+        $errors       = $this->validator->validate($notification);
 
         if ($errors->count() > 0) {
             throw new ValidatorException($errors[0]->getMessage());

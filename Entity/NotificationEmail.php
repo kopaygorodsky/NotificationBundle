@@ -19,19 +19,17 @@ class NotificationEmail extends Notification implements NotificationEmailInterfa
      */
     protected $fromEmail;
 
+    public function __construct(string $title, string $message, string $fromEmail, array $recipients)
+    {
+        parent::__construct($title, $message, $recipients);
+        $this->fromEmail = $fromEmail;
+    }
+
     /**
      * @return string
      */
     public function getFromEmail(): string
     {
         return $this->fromEmail;
-    }
-
-    /**
-     * @param string $from
-     */
-    public function setFromEmail(string $from): void
-    {
-        $this->fromEmail = $from;
     }
 }

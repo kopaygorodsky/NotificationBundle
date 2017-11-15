@@ -12,7 +12,6 @@ namespace Kopay\NotificationBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class Notification implements NotificationMessageInterface
 {
@@ -23,10 +22,6 @@ abstract class Notification implements NotificationMessageInterface
 
     /**
      * @var Collection
-     * @Assert\Count(
-     *      min = 1,
-     *      minMessage = "You must specify at least one receiver",
-     * )
      */
     protected $recipientsItems;
 
@@ -45,11 +40,21 @@ abstract class Notification implements NotificationMessageInterface
      */
     protected $createdAt;
 
-    public function __construct()
+    public function __construct(string $title, string $message, array $recipients)
     {
         $this->id              = Uuid::uuid4();
         $this->recipientsItems = new ArrayCollection();
         $this->createdAt       = new \DateTime();
+        $this->title           = $title;
+        $this->message         = $message;
+
+        if (empty($recipients)) {
+            throw new \InvalidArgumentException('You have to add at least one receiver');
+        }
+
+        array_walk($recipients, function ($recipient) {
+            $this->recipientsItems->add(new NotificationRecipient($this, $recipient));
+        });
     }
 
     /**
@@ -69,35 +74,11 @@ abstract class Notification implements NotificationMessageInterface
     }
 
     /**
-     * @param NotificationRecipientInterface $notificationRecipient
-     */
-    public function addRecipientItem(NotificationRecipientInterface $notificationRecipient): void
-    {
-        $this->recipientsItems->add($notificationRecipient);
-    }
-
-    /**
-     * @param NotificationRecipientInterface $notificationRecipient
-     */
-    public function removeRecipientItem(NotificationRecipientInterface $notificationRecipient): void
-    {
-        $this->recipientsItems->removeElement($notificationRecipient);
-    }
-
-    /**
      * @return string
      */
     public function getMessage(): ? string
     {
         return $this->message;
-    }
-
-    /**
-     * @param string $message
-     */
-    public function setMessage(? string $message): void
-    {
-        $this->message = $message;
     }
 
     /**
@@ -109,28 +90,10 @@ abstract class Notification implements NotificationMessageInterface
     }
 
     /**
-     * @param string $title
-     */
-    public function setTitle(? string $title): void
-    {
-        $this->title = $title;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
-    }
-
-    /**
-     * @param $recipient
-     */
-    public function addRecipient($recipient): void
-    {
-        $item = new NotificationRecipient();
-        $item->setRecipient($recipient);
-        $this->addRecipientItem($item);
     }
 }
