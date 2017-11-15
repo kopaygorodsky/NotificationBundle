@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\Entity;
 
 class NotificationPush extends Notification
@@ -9,6 +16,12 @@ class NotificationPush extends Notification
      */
     protected $value;
 
+    public function __construct(string $title, string $message, array $value, array $recipients)
+    {
+        parent::__construct($title, $message, $recipients);
+        $this->value = $value;
+    }
+
     /**
      * @return array
      */
@@ -16,13 +29,4 @@ class NotificationPush extends Notification
     {
         return $this->value;
     }
-
-    /**
-     * @param array $value
-     */
-    public function setValue(array $value)
-    {
-        $this->value = $value;
-    }
-
 }

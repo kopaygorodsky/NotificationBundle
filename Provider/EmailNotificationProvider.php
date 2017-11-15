@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\Provider;
 
 use Kopay\NotificationBundle\Entity\NotificationEmailInterface;
@@ -20,19 +27,18 @@ class EmailNotificationProvider implements NotificationProviderInterface
 
     public function __construct(\Swift_Mailer $mailer, ReceiverIdentityInterface $identity)
     {
-        $this->mailer = $mailer;
+        $this->mailer   = $mailer;
         $this->identity = $identity;
     }
 
     public function send(NotificationMessageInterface $notification): void
     {
-
         $receivers = $this->identity->getIdentities(
             array_map(
                 function ($recipientItem) {
                     return $recipientItem->getRecipient();
                 },
-                (array)$notification->getRecipientsItems()
+                (array) $notification->getRecipientsItems()
             )
         );
 

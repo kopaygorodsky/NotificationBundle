@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -31,34 +38,26 @@ class NotificationListener
      */
     private $validator;
 
-
     public function __construct(ObjectManager $manager, EventDispatcherInterface $dispatcher, JobProviderInterface $jobProvider, ValidatorInterface $validator)
     {
         $this->objectManager = $manager;
-        $this->dispatcher = $dispatcher;
-        $this->jobProvider = $jobProvider;
-        $this->validator = $validator;
-
+        $this->dispatcher    = $dispatcher;
+        $this->jobProvider   = $jobProvider;
+        $this->validator     = $validator;
     }
 
     public function onNotificationCreated(NotificationEventInterface $event): void
     {
-        //write this notification to db, now we don't have any other options
         $notification = $event->getNotification();
-
-        $errors = $this->validator->validate($notification);
+        $errors       = $this->validator->validate($notification);
 
         if ($errors->count() > 0) {
             throw new ValidatorException($errors[0]->getMessage());
         }
 
         $this->objectManager->persist($notification);
-
-        $this->dispatcher->dispatch(NotificationEventInterface::NOTIFICATION_POST_PERSIST, $event);
-
-        // create a job to make notifications async.
+        // create a job to send notification.
         $this->jobProvider->createJob($notification);
-
-        $this->dispatcher->dispatch(NotificationEventInterface::JOB_CREATED, $event);
+        $this->dispatcher->dispatch(NotificationEventInterface::NOTIFICATION_JOB_CREATED, $event);
     }
 }

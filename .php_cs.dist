@@ -1,0 +1,27 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__)
+;
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        '@Symfony' => true,
+        '@PSR2' => true,
+        '@PSR1' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'blank_line_before_statement' => true,
+        'binary_operator_spaces' => [
+            'align_equals' => true,
+            'align_double_arrow' => true
+        ],
+        'header_comment' => [
+                    'header' => <<<HEADER
+This file is part of the KopayNotificationBundle package.
+(c) kopaygorodsky
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+HEADER
+        ],
+    ])
+    ->setFinder($finder);

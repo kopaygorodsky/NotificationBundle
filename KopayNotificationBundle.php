@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle;
 
 use Kopay\NotificationBundle\DependencyInjection\Compiler\RegisterTagServicesPass;
@@ -16,8 +23,8 @@ class KopayNotificationBundle extends Bundle
 
         $container->addCompilerPass(
             new RegisterTagServicesPass(
-                'kopaygorodsky_notification.console.send_notification',
-                'kopaygorodsky_notifications.sending_provider'
+                'kopay_notification.console.send_notification',
+                'kopay_notification.sending_provider'
             )
         );
         // set 1 priority to run it before doctrine compiler passes

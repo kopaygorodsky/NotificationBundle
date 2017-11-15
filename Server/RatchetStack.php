@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the KopayNotificationBundle package.
+ * (c) kopaygorodsky
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kopay\NotificationBundle\Server;
 
 use Ratchet\Http\HttpServer;
@@ -14,18 +21,24 @@ class RatchetStack implements ServerStackInterface
     protected $server;
 
     /**
+     * @var string
+     */
+    protected $host;
+
+    /**
      * @var int
      */
     private $port;
 
-    public function __construct(NotificationServer $notificationServer, int $port)
+    public function __construct(NotificationServer $notificationServer, string $host, int $port)
     {
-        $this->port = $port;
+        $this->host   = $host;
+        $this->port   = $port;
         $this->server = IoServer::factory(new HttpServer(
             new WsServer(
                 $notificationServer
             )
-        ), $port);
+        ), $port, $host);
     }
 
     public function run(): void
