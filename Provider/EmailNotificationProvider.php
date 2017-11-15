@@ -38,7 +38,7 @@ class EmailNotificationProvider implements NotificationProviderInterface
                 function ($recipientItem) {
                     return $recipientItem->getRecipient();
                 },
-                (array) $notification->getRecipientsItems()
+                $notification->getRecipientsItems()->toArray()
             )
         );
 
