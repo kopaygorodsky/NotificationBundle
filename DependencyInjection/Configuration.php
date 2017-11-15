@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('recipientClass')
+                    ->defaultFalse()
                     ->end()
                 ->arrayNode('types')
                     ->children()
