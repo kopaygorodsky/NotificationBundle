@@ -12,6 +12,7 @@ namespace Kopay\NotificationBundle\DependencyInjection\Compiler;
 use Kopay\NotificationBundle\DependencyInjection\KopayNotificationExtension;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 final class RegisterUserProviderClass implements CompilerPassInterface
 {
@@ -19,13 +20,11 @@ final class RegisterUserProviderClass implements CompilerPassInterface
     {
         $bundleConfig = $container->getExtensionConfig('kopay_notification');
 
-        //do not check security provider if recipientClass is defined
-        if (isset($bundleConfig[0]['recipientClass'])) {
-            if (false === $bundleConfig[0]['recipientClass']) {
-                $container->removeDefinition(KopayNotificationExtension::METADATA_LISTENER);
-            }
+        $isRecipientClassDefined = isset($bundleConfig[0]['recipientClass']) && false !== $bundleConfig[0]['recipientClass'];
 
-            return;
+        //do not check security provider if recipientClass is defined
+        if ($isRecipientClassDefined) {
+            $container->removeDefinition(KopayNotificationExtension::METADATA_LISTENER);
         }
 
         $securityConfig = $container->getExtensionConfig('security');
@@ -35,12 +34,32 @@ final class RegisterUserProviderClass implements CompilerPassInterface
             $defaultProvider     = $providers[key($providers)];
             $defaultProviderType = key($defaultProvider);
 
-            if ('entity' === $defaultProviderType) {
-                $userClass        = $defaultProvider[$defaultProviderType]['class'];
-                $metadataListener = $container->getDefinition(KopayNotificationExtension::METADATA_LISTENER);
-                $metadataListener->addArgument($userClass);
+            $isAuthEnabled = isset($bundleConfig[0]['types']['push']['server']['auth']) && false !== $bundleConfig[0]['types']['push']['server']['auth'];
+            $userProvider  = null;
 
-                return;
+            switch ($defaultProviderType) {
+                case 'entity':
+                    if (!$isRecipientClassDefined) {
+                        $userClass        = $defaultProvider[$defaultProviderType]['class'];
+                        $metadataListener = $container->getDefinition(KopayNotificationExtension::METADATA_LISTENER);
+                        $metadataListener->addArgument($userClass);
+                    }
+                    $userProvider = new Reference('security.user.provider.concrete.user');
+
+                    break;
+                case 'chain':
+                    $userProvider = new Reference('security.user.provider.chain');
+
+                    break;
+                case 'id':
+                    $userProvider = new Reference($defaultProvider['id']);
+
+                    break;
+            }
+
+            if ($userProvider && $isAuthEnabled) {
+                $container->getDefinition('kopay_notification.websockets.auth_provider')
+                    ->setArgument(0, $userProvider);
             }
         }
         $container->removeDefinition(KopayNotificationExtension::METADATA_LISTENER);
