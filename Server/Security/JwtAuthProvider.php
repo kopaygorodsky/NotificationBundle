@@ -31,7 +31,7 @@ class JwtAuthProvider implements AuthenticatorInterface
     public function __construct(AuthenticationManagerInterface $authenticationManager, JWTTokenManagerInterface $jwtManager)
     {
         $this->authenticationManager = $authenticationManager;
-        $this->jwtManager = $jwtManager;
+        $this->jwtManager            = $jwtManager;
     }
 
     public function authenticate(ConnectionInterface $connection): ? TokenInterface

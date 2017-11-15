@@ -36,17 +36,23 @@ abstract class Notification implements NotificationMessageInterface
     protected $message;
 
     /**
+     * @var bool
+     */
+    protected $visible = true;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
 
-    public function __construct(string $title, string $message, array $recipients)
+    public function __construct(string $title, string $message, bool $visible, array $recipients)
     {
         $this->id              = Uuid::uuid4();
         $this->recipientsItems = new ArrayCollection();
         $this->createdAt       = new \DateTime();
         $this->title           = $title;
         $this->message         = $message;
+        $this->visible         = $visible;
 
         if (empty($recipients)) {
             throw new \InvalidArgumentException('You have to add at least one receiver');
@@ -95,5 +101,13 @@ abstract class Notification implements NotificationMessageInterface
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVisible(): bool
+    {
+        return $this->visible;
     }
 }

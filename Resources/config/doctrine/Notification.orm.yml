@@ -23,6 +23,8 @@ Kopay\NotificationBundle\Entity\Notification:
             nullable: true
         createdAt:
             type: datetime
+        visible:
+            type: boolean
     oneToMany:
         recipientsItems:
             targetEntity: Kopay\NotificationBundle\Entity\NotificationRecipient

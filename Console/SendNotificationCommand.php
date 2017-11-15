@@ -16,7 +16,6 @@ use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 use Kopay\NotificationBundle\Event\Events;
 use Kopay\NotificationBundle\Event\NotificationEvent;
 use Kopay\NotificationBundle\Event\NotificationEventFailed;
-use Kopay\NotificationBundle\Event\NotificationEventInterface;
 use Kopay\NotificationBundle\Provider\NotificationProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

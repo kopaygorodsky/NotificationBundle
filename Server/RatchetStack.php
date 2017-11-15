@@ -37,8 +37,8 @@ class RatchetStack implements ServerStackInterface
 
     public function __construct(NotificationServer $notificationServer, string $host, int $port)
     {
-        $this->host   = $host;
-        $this->port   = $port;
+        $this->host               = $host;
+        $this->port               = $port;
         $this->notificationServer = $notificationServer;
     }
 

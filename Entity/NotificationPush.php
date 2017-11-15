@@ -16,9 +16,9 @@ class NotificationPush extends Notification
      */
     protected $value;
 
-    public function __construct(string $title, string $message, array $value, array $recipients)
+    public function __construct(string $title, string $message, ? array $value, bool $visible, array $recipients)
     {
-        parent::__construct($title, $message, $recipients);
+        parent::__construct($title, $message, $visible, $recipients);
         $this->value = $value;
     }
 

@@ -19,9 +19,9 @@ class NotificationEmail extends Notification implements NotificationEmailInterfa
      */
     protected $fromEmail;
 
-    public function __construct(string $title, string $message, string $fromEmail, array $recipients)
+    public function __construct(string $title, string $message, string $fromEmail, bool $visible, array $recipients)
     {
-        parent::__construct($title, $message, $recipients);
+        parent::__construct($title, $message, $visible, $recipients);
         $this->fromEmail = $fromEmail;
     }
 
