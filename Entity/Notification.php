@@ -23,10 +23,6 @@ abstract class Notification implements NotificationMessageInterface
 
     /**
      * @var Collection
-     * @Assert\Count(
-     *      min = 1,
-     *      minMessage = "You must specify at least one receiver",
-     * )
      */
     protected $recipientsItems;
 
@@ -52,6 +48,11 @@ abstract class Notification implements NotificationMessageInterface
         $this->createdAt       = new \DateTime();
         $this->title           = $title;
         $this->message         = $message;
+
+        if (empty($recipients)) {
+            throw new \InvalidArgumentException('You have to add at least one receiver');
+        }
+
         array_walk($recipients, function ($recipient) {
             $item = new NotificationRecipient();
             $item->setRecipient($recipient);
