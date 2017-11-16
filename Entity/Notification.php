@@ -45,6 +45,11 @@ abstract class Notification implements NotificationMessageInterface
      */
     protected $createdAt;
 
+    /**
+     * @var \DateTime
+     */
+    protected $seenAt;
+
     public function __construct(string $title, string $message, bool $visible, array $recipients)
     {
         $this->id              = Uuid::uuid4();
@@ -109,5 +114,10 @@ abstract class Notification implements NotificationMessageInterface
     public function isVisible(): bool
     {
         return $this->visible;
+    }
+
+    public function seen(): void
+    {
+        $this->seenAt = new \DateTime();
     }
 }

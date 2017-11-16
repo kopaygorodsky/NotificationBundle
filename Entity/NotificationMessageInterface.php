@@ -33,4 +33,6 @@ interface NotificationMessageInterface
      * @return null|string
      */
     public function getTitle(): ? string;
+
+    public function seen(): void;
 }
