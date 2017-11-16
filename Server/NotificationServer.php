@@ -35,11 +35,8 @@ class NotificationServer implements MessageComponentInterface
      */
     public function onOpen(ConnectionInterface $conn)
     {
-        $conn->send('You are connected from: '.$conn->remoteAddress);
-
         if ('127.0.0.1' === $conn->remoteAddress) {
             $conn->uniqueId                     = uniqid('internal_', true);
-            $this->connections[$conn->uniqueId] = $conn;
         } elseif ($this->authProvider) {
             //if auth is enabled
             if (null === $authToken = $this->authProvider->authenticate($conn)) {
@@ -48,14 +45,13 @@ class NotificationServer implements MessageComponentInterface
                 return;
             }
             $user                              = $authToken->getUser();
-            $conn->uniqueId                    = $user->getId();
-            $this->connections[$user->getId()] = $conn;
+            $conn->uniqueId                    = 'user_'.$user->getId();
         } else {
             $conn->uniqueId                     = uniqid('conn_', true);
-            $this->connections[$conn->uniqueId] = $conn;
         }
 
-        $conn->send(json_encode(['connection_id' => $conn->uniqueId, 'message' => '..:: Hello from the Notification Center ::..']));
+        $this->connections[$conn->uniqueId] = $conn;
+        $conn->send(json_encode(['connection_id' => $conn->uniqueId, 'message' => '..:: Hello from the Notification Center ::..', 'ip' => $conn->remoteAddress]));
     }
 
     /**
@@ -75,9 +71,15 @@ class NotificationServer implements MessageComponentInterface
 
         $data = json_decode($msg, true);
 
-        if (isset($data['receiver']) && array_key_exists($data['receiver'], $this->connections)) {
-            $this->connections[$data['receiver']]->send(json_encode($data['message']));
+        if (!isset($data['recipient'])  || !array_key_exists($receiverKey = $data['recipient'], $this->connections)) {
+            return;
         }
+
+        if (!isset($data['data'])) {
+            return;
+        }
+
+        $this->connections[$receiverKey]->send(json_encode($data['data']));
     }
 
     /**
@@ -100,6 +102,7 @@ class NotificationServer implements MessageComponentInterface
      */
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
+        echo sprintf("Error: %s\n", $e->getMessage());
         $conn->send('Error : '.$e->getMessage());
         $conn->close();
     }
