@@ -81,9 +81,9 @@ final class KopayNotificationExtension extends Extension
 
     private function validateJobProvider(array $config, ContainerBuilder $container): void
     {
-        $registry = $container->findDefinition('kopay_notification.job_provider');
+        $jobProviderDefinition = $container->findDefinition('kopay_notification.job_provider');
 
-        if (JmsJobBundleProvider::class === $registry->getClass()) {
+        if (JmsJobBundleProvider::class === $jobProviderDefinition->getClass()) {
             if (!$this->isBundleEnabled('JMS\JobQueueBundle\JMSJobQueueBundle', $container)) {
                 throw new \LogicException(
                     sprintf(
@@ -93,6 +93,8 @@ final class KopayNotificationExtension extends Extension
                     )
                 );
             }
+
+            $jobProviderDefinition->addArgument($config['jms_queue']);
         }
     }
 

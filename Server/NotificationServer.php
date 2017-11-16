@@ -71,7 +71,7 @@ class NotificationServer implements MessageComponentInterface
 
         $data = json_decode($msg, true);
 
-        if (!isset($data['recipient'])  || !array_key_exists($receiverKey = $data['recipient'], $this->connections)) {
+        if (!isset($data['recipient']) || !array_key_exists($receiverKey = $data['recipient'], $this->connections)) {
             return;
         }
 

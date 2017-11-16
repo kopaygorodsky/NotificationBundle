@@ -16,16 +16,25 @@ use Kopay\NotificationBundle\Entity\NotificationMessageInterface;
 
 class JmsJobBundleProvider implements JobProviderInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $entityManager;
 
-    public function __construct(EntityManager $entityManager)
+    /**
+     * @var string
+     */
+    protected $queue;
+
+    public function __construct(EntityManager $entityManager, string $queue)
     {
         $this->entityManager = $entityManager;
+        $this->queue         = $queue;
     }
 
     public function createJob(NotificationMessageInterface $notification): void
     {
-        $job = new Job(NotificationCommandInterface::SEND_NOTIFICATION, [$notification->getId()]);
+        $job = new Job(NotificationCommandInterface::SEND_NOTIFICATION, [$notification->getId()], true, $this->queue);
         $this->entityManager->persist($job);
     }
 }
