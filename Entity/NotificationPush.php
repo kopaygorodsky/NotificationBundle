@@ -14,19 +14,19 @@ class NotificationPush extends Notification
     /**
      * @var array
      */
-    protected $value;
+    protected $payload;
 
-    public function __construct(string $title, string $message, ? array $value, bool $visible, array $recipients)
+    public function __construct(string $title, string $message, ? array $payload, bool $visible, array $recipients)
     {
         parent::__construct($title, $message, $visible, $recipients);
-        $this->value = $value;
+        $this->payload = $payload;
     }
 
     /**
      * @return array
      */
-    public function getValue(): ? array
+    public function getPayload(): ? array
     {
-        return $this->value;
+        return $this->payload;
     }
 }

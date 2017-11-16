@@ -54,7 +54,7 @@ class PushNotificationProvider implements NotificationProviderInterface
                 $data = [
                     'data' => [
                         'message' => $notification->getMessage(),
-                        'value'   => $notification->getValue(),
+                        'payload'   => $notification->getPayload(),
                         'title'   => $notification->getTitle(),
                     ],
                     'recipient' => 'user_'.$receiver,
