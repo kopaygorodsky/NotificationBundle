@@ -11,7 +11,6 @@ namespace Kopay\NotificationBundle\Server\Security;
 
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Entity;
 use function GuzzleHttp\Psr7\parse_query;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
@@ -53,7 +52,7 @@ class JwtAuthProvider implements AuthenticatorInterface
         $this->userProvider          = $userProvider;
         $this->jwtManager            = $jwtManager;
         $this->dispatcher            = $dispatcher;
-        $this->entityManager = $entityManager;
+        $this->entityManager         = $entityManager;
     }
 
     public function authenticate(ConnectionInterface $connection): ? TokenInterface
@@ -86,7 +85,7 @@ class JwtAuthProvider implements AuthenticatorInterface
             if (!$this->canReconnect($exception) || $this->entityManager->getConnection()->ping()) {
                 throw $exception;
             }
-            //if users are stored in db and provider lost connection to db we will try to reconnect and load user again
+            //if users are stored in db and provider lost connection to db, we will try to reconnect and load user again
             $this->reconnectDb();
             $user = $this->userProvider->loadUserByUsername($payload['username']);
         }
@@ -103,8 +102,8 @@ class JwtAuthProvider implements AuthenticatorInterface
 
     private function reconnectDb(): void
     {
-        $tries = 5;
-        $connection = $this->entityManager->getConnection();
+        $tries           = 5;
+        $connection      = $this->entityManager->getConnection();
         $failedException = new \PDOException('Can not reconnect');
 
         while ($tries > 0) {

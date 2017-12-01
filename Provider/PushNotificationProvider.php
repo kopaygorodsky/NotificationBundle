@@ -53,9 +53,9 @@ class PushNotificationProvider implements NotificationProviderInterface
             foreach ($receivers as $receiver) {
                 $data = [
                     'data' => [
-                        'message' => $notification->getMessage(),
+                        'message'   => $notification->getMessage(),
                         'payload'   => $notification->getPayload(),
-                        'title'   => $notification->getTitle(),
+                        'title'     => $notification->getTitle(),
                     ],
                     'recipient' => 'user_'.$receiver,
                 ];
