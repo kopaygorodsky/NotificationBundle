@@ -9,6 +9,9 @@
 
 namespace Kopay\NotificationBundle\Server\Security;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Entity;
 use function GuzzleHttp\Psr7\parse_query;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
@@ -40,11 +43,17 @@ class JwtAuthProvider implements AuthenticatorInterface
      */
     protected $dispatcher;
 
-    public function __construct(UserProviderInterface $userProvider, JWTTokenManagerInterface $jwtManager, EventDispatcherInterface $dispatcher)
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    public function __construct(UserProviderInterface $userProvider, JWTTokenManagerInterface $jwtManager, EventDispatcherInterface $dispatcher, EntityManager $entityManager)
     {
         $this->userProvider          = $userProvider;
         $this->jwtManager            = $jwtManager;
         $this->dispatcher            = $dispatcher;
+        $this->entityManager = $entityManager;
     }
 
     public function authenticate(ConnectionInterface $connection): ? TokenInterface
@@ -65,13 +74,22 @@ class JwtAuthProvider implements AuthenticatorInterface
             $preAuthToken->setPayload($payload);
         } catch (JWTDecodeFailureException $e) {
             if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {
-                throw new ExpiredTokenException();
+                throw new ExpiredTokenException('Token is expired');
             }
 
             throw new InvalidTokenException('Invalid JWT Token', 0, $e);
         }
 
-        $user = $this->userProvider->loadUserByUsername($payload['username']);
+        try {
+            $user = $this->userProvider->loadUserByUsername($payload['username']);
+        } catch (DBALException $exception) {
+            if (!$this->canReconnect($exception) || $this->entityManager->getConnection()->ping()) {
+                throw $exception;
+            }
+            //if users are stored in db and provider lost connection to db we will try to reconnect and load user again
+            $this->reconnectDb();
+            $user = $this->userProvider->loadUserByUsername($payload['username']);
+        }
 
         $authToken = new JWTUserToken($user->getRoles());
         $authToken->setUser($user);
@@ -81,5 +99,35 @@ class JwtAuthProvider implements AuthenticatorInterface
         $this->dispatcher->dispatch(Events::JWT_AUTHENTICATED, $event);
 
         return $authToken;
+    }
+
+    private function reconnectDb(): void
+    {
+        $tries = 5;
+        $connection = $this->entityManager->getConnection();
+        $failedException = new \PDOException('Can not reconnect');
+
+        while ($tries > 0) {
+            try {
+                $connection->close();
+                $connection->connect();
+
+                if (!$connection->ping()) {
+                    throw $failedException;
+                }
+
+                return;
+            } catch (\Exception $exception) {
+                --$tries;
+            }
+        }
+
+        throw $failedException;
+    }
+
+    private function canReconnect(\Exception $e): bool
+    {
+        return false !== stripos($e->getMessage(), 'MySQL server has gone away')
+            || false !== stripos($e->getMessage(), 'Error while sending QUERY packet');
     }
 }

@@ -60,4 +60,4 @@ services:
 
     kopay_notification.websockets.auth_provider:
         class: Kopay\NotificationBundle\Server\Security\JwtAuthProvider
-        arguments: ['', '@lexik_jwt_authentication.jwt_manager', '@event_dispatcher']
+        arguments: ['', '@lexik_jwt_authentication.jwt_manager', '@event_dispatcher', '@doctrine.orm.entity_manager']
