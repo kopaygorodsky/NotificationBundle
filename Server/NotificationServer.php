@@ -12,6 +12,7 @@ namespace Kopay\NotificationBundle\Server;
 use Kopay\NotificationBundle\Server\Security\AuthenticatorInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class NotificationServer implements MessageComponentInterface
 {
@@ -39,8 +40,14 @@ class NotificationServer implements MessageComponentInterface
             $conn->uniqueId                     = uniqid('internal_', true);
         } elseif ($this->authProvider) {
             //if auth is enabled
-            if (null === $authToken = $this->authProvider->authenticate($conn)) {
+            try {
+                $authToken = $this->authProvider->authenticate($conn);
+            } catch (AuthenticationException $authException) {
                 $conn->close(403);
+
+                return;
+            } catch (\Exception $exception) {
+                $conn->close(500);
 
                 return;
             }
@@ -64,8 +71,7 @@ class NotificationServer implements MessageComponentInterface
     {
         //allowed only for internal connections
         if (false === strpos($from->uniqueId, 'internal_')) {
-            $from->send('You are not allowed to send messages');
-
+            //$from->send('You are not allowed to send messages');
             return;
         }
 
@@ -102,7 +108,7 @@ class NotificationServer implements MessageComponentInterface
      */
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
-        echo sprintf("Error: %s\n", $e->getMessage());
+        echo sprintf("Error: %s. Connection closed for %s\n", $e->getMessage(), $conn->remoteAddress);
         $conn->send('Error : '.$e->getMessage());
         $conn->close();
     }
