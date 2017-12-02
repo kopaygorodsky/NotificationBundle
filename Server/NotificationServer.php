@@ -71,17 +71,12 @@ class NotificationServer implements MessageComponentInterface
     {
         //allowed only for internal connections
         if (false === strpos($from->uniqueId, 'internal_')) {
-            //$from->send('You are not allowed to send messages');
             return;
         }
 
         $data = json_decode($msg, true);
 
-        if (!isset($data['recipient']) || !array_key_exists($receiverKey = $data['recipient'], $this->connections)) {
-            return;
-        }
-
-        if (!isset($data['data'])) {
+        if (!isset($data['recipient'], $data['data']) || !array_key_exists($receiverKey = $data['recipient'], $this->connections)) {
             return;
         }
 
@@ -108,7 +103,7 @@ class NotificationServer implements MessageComponentInterface
      */
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
-        echo sprintf("Error: %s. Connection closed for %s\n", $e->getMessage(), $conn->remoteAddress);
+        echo sprintf("Error: %s. Connection closed for %s\n", $e->getMessage(), $conn->remoteAddress); // replace with logs
         $conn->send('Error : '.$e->getMessage());
         $conn->close();
     }
