@@ -33,6 +33,10 @@ final class RegisterUserProviderClass implements CompilerPassInterface
             reset($providers);
             $defaultProvider     = $providers[key($providers)];
             $defaultProviderType = key($defaultProvider);
+            
+            if ('entity' !== $defaultProviderType && !$isRecipientClassDefined) {
+                throw new \LogicException(sprintf('Default provider is not entity type, please define \'recipientClass\' parameter'));
+            }
 
             $isAuthEnabled = isset($bundleConfig[0]['types']['push']['server']['auth']) && false !== $bundleConfig[0]['types']['push']['server']['auth'];
             $userProvider  = null;
