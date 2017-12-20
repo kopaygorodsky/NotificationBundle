@@ -21,11 +21,7 @@ final class RegisterUserProviderClass implements CompilerPassInterface
         $bundleConfig = $container->getExtensionConfig('kopay_notification');
 
         $isRecipientClassDefined = isset($bundleConfig[0]['recipientClass']) && false !== $bundleConfig[0]['recipientClass'];
-
-        //do not check security provider if recipientClass is defined
-        if ($isRecipientClassDefined) {
-            $container->removeDefinition(KopayNotificationExtension::METADATA_LISTENER);
-        }
+        $isAuthEnabled = isset($bundleConfig[0]['types']['push']['server']['auth']) && false !== $bundleConfig[0]['types']['push']['server']['auth'];
 
         $securityConfig = $container->getExtensionConfig('security');
 
@@ -38,7 +34,6 @@ final class RegisterUserProviderClass implements CompilerPassInterface
                 throw new \LogicException(sprintf('Default provider is not entity type, please define \'recipientClass\' parameter'));
             }
 
-            $isAuthEnabled = isset($bundleConfig[0]['types']['push']['server']['auth']) && false !== $bundleConfig[0]['types']['push']['server']['auth'];
             $userProvider  = null;
 
             switch ($defaultProviderType) {
@@ -64,6 +59,15 @@ final class RegisterUserProviderClass implements CompilerPassInterface
             if ($userProvider && $isAuthEnabled) {
                 $container->getDefinition('kopay_notification.websockets.auth_provider')
                     ->setArgument(0, $userProvider);
+            }
+        } else {
+            //if auth is enabled, but no providers found - exception
+            if ($isAuthEnabled) {
+                throw new \LogicException(sprintf('No user providers found for auth'));
+            }
+
+            if (!$isRecipientClassDefined) {
+                throw new \LogicException(sprintf('Recipient class not found in security, please define \'recipientClass\' parameter'));
             }
         }
     }
