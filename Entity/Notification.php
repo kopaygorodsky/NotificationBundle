@@ -64,6 +64,9 @@ abstract class Notification implements NotificationMessageInterface
         }
 
         array_walk($recipients, function ($recipient) {
+            if (null === $recipient) {
+                throw new \InvalidArgumentException('Recipients list can not contain null values');
+            }
             $this->recipientsItems->add(new NotificationRecipient($this, $recipient));
         });
     }
